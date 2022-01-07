@@ -67,6 +67,11 @@ func Run(inputs ...string) error {
 
 	var objController, objGateway string
 
+	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
+	if err != nil {
+		return err
+	}
+
 	{ //---------
 
 		driverName := "gin"

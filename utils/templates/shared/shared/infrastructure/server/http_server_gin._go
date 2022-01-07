@@ -26,7 +26,7 @@ func NewGinHTTPHandler(log logger.Logger, address string) GinHTTPHandler {
 
 	// PING API
 	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "Ready")
+		c.JSON(http.StatusOK, log.GetApplicationData())
 	})
 
 	// CORS

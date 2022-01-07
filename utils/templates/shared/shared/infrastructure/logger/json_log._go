@@ -8,9 +8,11 @@ import (
 
 func NewSimpleJSONLogger(appName, appInstanceID string) Logger {
 	return &simpleJSONLoggerImpl{
-		appName:       appName,
-		appInstanceID: appInstanceID,
-		startTime:     time.Now().String(),
+		ApplicationData: ApplicationData{
+			AppName:       appName,
+			AppInstanceID: appInstanceID,
+			StartTime:     time.Now().Format("2006-01-02 15:04:05"),
+		},
 	}
 }
 
@@ -28,9 +30,9 @@ func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid inter
 
 	if flag == "ERROR" {
 		return toJsonString(jsonLogModel{
-			AppName:   lg.appName,
-			AppInstID: lg.appInstanceID,
-			Start:     lg.startTime,
+			AppName:   lg.AppName,
+			AppInstID: lg.AppInstanceID,
+			Start:     lg.StartTime,
 			Severity:  flag,
 			Message:   fmt.Sprintf("%v %v %v", trid, loc, msg),
 			Location:  loc,
@@ -39,9 +41,9 @@ func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid inter
 	}
 
 	return toJsonString(jsonLogModel{
-		AppName:   lg.appName,
-		AppInstID: lg.appInstanceID,
-		Start:     lg.startTime,
+		AppName:   lg.AppName,
+		AppInstID: lg.AppInstanceID,
+		Start:     lg.StartTime,
 		Severity:  flag,
 		Message:   fmt.Sprintf("%v %v", trid, msg),
 		Location:  loc,
@@ -50,9 +52,7 @@ func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid inter
 }
 
 type simpleJSONLoggerImpl struct {
-	appName       string
-	appInstanceID string
-	startTime     string
+	ApplicationData
 }
 
 func (l simpleJSONLoggerImpl) Info(ctx context.Context, message string, args ...interface{}) {
@@ -63,6 +63,10 @@ func (l simpleJSONLoggerImpl) Info(ctx context.Context, message string, args ...
 func (l simpleJSONLoggerImpl) Error(ctx context.Context, message string, args ...interface{}) {
 	messageWithArgs := fmt.Sprintf(message, args...)
 	l.printLog(ctx, "ERROR", messageWithArgs)
+}
+
+func (l simpleJSONLoggerImpl) GetApplicationData() ApplicationData {
+	return l.ApplicationData
 }
 
 func (l simpleJSONLoggerImpl) printLog(ctx context.Context, flag string, data interface{}) {
