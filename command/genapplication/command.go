@@ -173,49 +173,6 @@ func Run(inputs ...string) error {
 			return err
 		}
 
-		//_, err = utils.CreateFolderIfNotExist("application/registry")
-		//if err != nil {
-		//	return err
-		//}
-		//
-		//templateFile := r.outport.GetApplicationFileTemplate(ctx)
-		//_, err = r.outport.WriteFileIfNotExist(ctx, templateFile, "application/application.go", objRegistry.GetData(packagePath))
-		//if err != nil {
-		//	return nil, err
-		//}
-		//
-		//if !util.IsFileExist(objRegistry.GetRegistryFileName()) {
-		//
-		//	tem := r.outport.GetRegistryFileTemplate(ctx, driverName)
-		//	out := objRegistry.GetRegistryFileName()
-		//	_, err = r.outport.WriteFileIfNotExist(ctx, tem, out, objRegistry.GetData(packagePath))
-		//	if err != nil {
-		//		return nil, err
-		//	}
-		//
-		//	// reformat registry.go
-		//	err = r.outport.Reformat(ctx, out, nil)
-		//	if err != nil {
-		//		return nil, err
-		//	}
-		//
-		//} else {
-		//
-		//	//err = objRegistry.InjectUsecaseInportField()
-		//	//if err != nil {
-		//	//  return nil, err
-		//	//}
-		//
-		//}
-
-		//{
-		//	templateFile := r.outport.GetMainFileTemplate(ctx)
-		//	_, err = r.outport.WriteFileIfNotExist(ctx, templateFile, "main.go", objRegistry.GetData(packagePath))
-		//	if err != nil {
-		//		return nil, err
-		//	}
-		//}
-
 	} //---------
 
 	return nil

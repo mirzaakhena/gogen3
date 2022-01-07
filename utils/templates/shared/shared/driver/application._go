@@ -1,9 +1,11 @@
-package application
+package driver
 
-import "{{.PackagePath}}/controller"
+type Controller interface {
+	RegisterRouter()
+}
 
 type RegistryContract interface {
-	controller.Controller
+	Controller
 	RunApplication()
 }
 

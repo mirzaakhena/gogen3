@@ -6,11 +6,11 @@ import (
     "time"
 )
 
-func NewSimpleJSONLogger(appName, instanceID string, startTime time.Time) Logger {
+func NewSimpleJSONLogger(appName, appInstanceID string) Logger {
 	return &simpleJSONLoggerImpl{
 		appName:       appName,
-		appInstanceID: instanceID,
-		startTime:     startTime.String(),
+		appInstanceID: appInstanceID,
+		startTime:     time.Now().String(),
 	}
 }
 

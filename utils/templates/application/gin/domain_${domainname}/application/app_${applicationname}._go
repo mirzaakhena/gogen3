@@ -1,29 +1,34 @@
 package application
 
 import (
-  "{{.PackagePath}}/domain_{{.DomainName}}/controller"
   "{{.PackagePath}}/domain_{{.DomainName}}/controller/{{LowerCase .ControllerName}}"
-  "{{.PackagePath}}/domain_{{.DomainName}}/gateway/{{LowerCase .GatewayName}}"
-  "{{.PackagePath}}/domain_{{.DomainName}}/infrastructure/server" {{range .UsecaseNames}}
+  "{{.PackagePath}}/domain_{{.DomainName}}/gateway/{{LowerCase .GatewayName}}" {{range .UsecaseNames}}
   "{{$.PackagePath}}/domain_{{$.DomainName}}/usecase/{{LowerCase .}}" {{end}}
+  "{{.PackagePath}}/shared/driver"
+  "{{.PackagePath}}/shared/infrastructure/server"
+  "{{.PackagePath}}/shared/infrastructure/logger"
 )
 
 type {{CamelCase .ApplicationName}} struct {
 	*server.GinHTTPHandler
-	controller.Controller
+	driver.Controller
 }
 
-func New{{PascalCase .ApplicationName}}() func() RegistryContract {
-	return func() RegistryContract {
+func New{{PascalCase .ApplicationName}}() func() driver.RegistryContract {
+	return func() driver.RegistryContract {
 
-        httpHandler := server.NewGinHTTPHandlerDefault()
+		appID := util.GenerateID(4)
 
-        datasource := {{LowerCase .GatewayName}}.NewGateway()
+		log := logger.NewSimpleJSONLogger("appone", appID)
+
+        httpHandler := server.NewGinHTTPHandlerDefault(log)
+
+        datasource := {{LowerCase .GatewayName}}.NewGateway(log)
 
         return &{{CamelCase .ApplicationName}}{
             GinHTTPHandler: &httpHandler,
             Controller: &{{LowerCase .ControllerName}}.Controller{
-                Router:             httpHandler.Router, {{range .UsecaseNames}}
+                Router: httpHandler.Router, {{range .UsecaseNames}}
                 {{PascalCase .}}Inport: {{LowerCase .}}.NewUsecase(datasource), {{end}}
             },
         }

@@ -1,13 +1,14 @@
 package {{LowerCase .ControllerName}}
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .UsecaseName}}"
 	"{{.PackagePath}}/shared/infrastructure/logger"
-    "{{.PackagePath}}/shared/infrastructure/util"
+	"{{.PackagePath}}/shared/infrastructure/util"
 )
 
 // {{CamelCase .UsecaseName}}Handler ...
@@ -21,11 +22,11 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 
 	return func(c *gin.Context) {
 
-		traceID := util.GenerateID()
+		traceID := util.GenerateID(16)
 
-        ctx := logger.SetTraceID(context.Background(), traceID)
+		ctx := logger.SetTraceID(context.Background(), traceID)
 
-        var jsonReq request
+		var jsonReq request
 		if err := c.BindJSON(&jsonReq); err != nil {
 			r.log.Error(ctx, err.Error())
 			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))

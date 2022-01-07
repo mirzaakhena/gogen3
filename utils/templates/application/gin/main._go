@@ -1,22 +1,23 @@
 package main
 
 import (
-  "{{.PackagePath}}/application"
   "flag"
   "fmt"
+  "{{.PackagePath}}/domain_{{.DomainName}}/application"
+  "{{.PackagePath}}/shared/driver"
 )
 
 func main() {
 
-  appMap := map[string]func() application.RegistryContract{
-    "{{LowerCase .RegistryName}}": application.New{{PascalCase .RegistryName}}(),
+  appMap := map[string]func() driver.RegistryContract{
+    "{{LowerCase .ApplicationName}}": application.New{{PascalCase .ApplicationName}}(),
   }
 
   flag.Parse()
 
   app, exist := appMap[flag.Arg(0)]
   if exist {
-    application.Run(app())
+    driver.Run(app())
   } else {
     fmt.Println("You may try 'go run main.go <app_name>' :")
     for appName := range appMap {

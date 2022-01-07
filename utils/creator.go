@@ -48,7 +48,13 @@ func (x Haha) CreateEverythingExactly(pathUnder string, fileRenamer map[string]s
 		}
 
 		j := strings.LastIndex(nameFileWithExtOnly, "._")
-		nameFileWithoutUnderscore := fmt.Sprintf("%s/%s%s", file[:i], nameFileWithExtOnly[:j+1], nameFileWithExtOnly[j+2:])
+
+		var nameFileWithoutUnderscore string
+		if i == -1 {
+			nameFileWithoutUnderscore = fmt.Sprintf("%s%s", nameFileWithExtOnly[:j+1], nameFileWithExtOnly[j+2:])
+		} else {
+			nameFileWithoutUnderscore = fmt.Sprintf("%s/%s%s", file[:i], nameFileWithExtOnly[:j+1], nameFileWithExtOnly[j+2:])
+		}
 
 		if IsFileExist(nameFileWithoutUnderscore) {
 			continue
