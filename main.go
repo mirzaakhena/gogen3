@@ -13,7 +13,7 @@ import (
 	"gogen3/command/gentest"
 	"gogen3/command/genusecase"
 	"gogen3/command/genvalueobject"
-	genvaluestring "gogen3/command/genvaluestring"
+	"gogen3/command/genvaluestring"
 )
 
 func main() {
