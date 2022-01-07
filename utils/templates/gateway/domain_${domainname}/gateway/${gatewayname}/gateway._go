@@ -1,0 +1,27 @@
+package {{LowerCase .GatewayName}}
+
+import (
+	"context"
+
+	"{{.PackagePath}}/domain_{{.DomainName}}/model/entity"
+	"{{.PackagePath}}/shared/infrastructure/logger"
+)
+
+type gateway struct {
+    log logger.Logger
+}
+
+// NewGateway ...
+func NewGateway(log logger.Logger) (*gateway) {
+	return &gateway{
+	    log: log,
+	}
+}
+
+{{range .Methods}}
+func (r *gateway) {{.MethodName}}{{.MethodSignature}} {
+    r.log.Info(ctx, "called")
+
+    return {{.DefaultReturnVal}}
+}
+{{end}}

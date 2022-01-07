@@ -1,0 +1,14 @@
+package util
+
+import gonanoid "github.com/matoous/go-nanoid"
+
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+func GenerateID() string {
+	ID, err := gonanoid.Generate(alphabet, 16)
+	if err != nil {
+		return ""
+	}
+
+	return ID
+}

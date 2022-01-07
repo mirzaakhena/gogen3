@@ -1,0 +1,81 @@
+package logger
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func NewSimpleJSONLogger(appName, instanceID string, startTime time.Time) Logger {
+	return &simpleJSONLoggerImpl{
+		appName:       appName,
+		appInstanceID: instanceID,
+		startTime:     startTime.String(),
+	}
+}
+
+type jsonLogModel struct {
+	AppName   string `json:"appName"`
+	AppInstID string `json:"appInstID"`
+	Start     string `json:"start"`
+	Severity  string `json:"severity"`
+	Message   string `json:"message"`
+	Location  string `json:"location"`
+	Time      string `json:"time"`
+}
+
+func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid interface{}) string {
+
+	if flag == "ERROR" {
+		return toJsonString(jsonLogModel{
+			AppName:   lg.appName,
+			AppInstID: lg.appInstanceID,
+			Start:     lg.startTime,
+			Severity:  flag,
+			Message:   fmt.Sprintf("%v %v %v", trid, loc, msg),
+			Location:  loc,
+			Time:      time.Now().String(),
+		})
+	}
+
+	return toJsonString(jsonLogModel{
+		AppName:   lg.appName,
+		AppInstID: lg.appInstanceID,
+		Start:     lg.startTime,
+		Severity:  flag,
+		Message:   fmt.Sprintf("%v %v", trid, msg),
+		Location:  loc,
+		Time:      time.Now().String(),
+	})
+}
+
+type simpleJSONLoggerImpl struct {
+	appName       string
+	appInstanceID string
+	startTime     string
+}
+
+func (l simpleJSONLoggerImpl) Info(ctx context.Context, message string, args ...interface{}) {
+	messageWithArgs := fmt.Sprintf(message, args...)
+	l.printLog(ctx, "INFO", messageWithArgs)
+}
+
+func (l simpleJSONLoggerImpl) Error(ctx context.Context, message string, args ...interface{}) {
+	messageWithArgs := fmt.Sprintf(message, args...)
+	l.printLog(ctx, "ERROR", messageWithArgs)
+}
+
+func (l simpleJSONLoggerImpl) printLog(ctx context.Context, flag string, data interface{}) {
+
+	// default traceId
+	traceID := "0000000000000000"
+
+	if ctx != nil {
+		if v := ctx.Value(traceDataKey); v != nil {
+			traceID = v.(string)
+		}
+	}
+
+	fmt.Println(newJSONLogModel(&l, flag, getFileLocationInfo(3), data, traceID))
+
+}

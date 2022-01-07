@@ -1,0 +1,32 @@
+package application
+
+import (
+  "{{.PackagePath}}/domain_{{.DomainName}}/controller"
+  "{{.PackagePath}}/domain_{{.DomainName}}/controller/{{LowerCase .ControllerName}}"
+  "{{.PackagePath}}/domain_{{.DomainName}}/gateway/{{LowerCase .GatewayName}}"
+  "{{.PackagePath}}/domain_{{.DomainName}}/infrastructure/server" {{range .UsecaseNames}}
+  "{{$.PackagePath}}/domain_{{$.DomainName}}/usecase/{{LowerCase .}}" {{end}}
+)
+
+type {{CamelCase .ApplicationName}} struct {
+	*server.GinHTTPHandler
+	controller.Controller
+}
+
+func New{{PascalCase .ApplicationName}}() func() RegistryContract {
+	return func() RegistryContract {
+
+        httpHandler := server.NewGinHTTPHandlerDefault()
+
+        datasource := {{LowerCase .GatewayName}}.NewGateway()
+
+        return &{{CamelCase .ApplicationName}}{
+            GinHTTPHandler: &httpHandler,
+            Controller: &{{LowerCase .ControllerName}}.Controller{
+                Router:             httpHandler.Router, {{range .UsecaseNames}}
+                {{PascalCase .}}Inport: {{LowerCase .}}.NewUsecase(datasource), {{end}}
+            },
+        }
+
+    }
+}
