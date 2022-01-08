@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"{{.PackagePath}}/model/entity"
+	"{{.PackagePath}}/domain_{{.DomainName}}/model/entity"
 	"time"
 )
 

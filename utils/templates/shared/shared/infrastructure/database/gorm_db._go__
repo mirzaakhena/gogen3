@@ -3,12 +3,9 @@ package database
 import (
 	"context"
 	"fmt"
-	"gorm.io/driver/postgres"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"time"
 )
 
 func NewSQLiteDefault() (db *gorm.DB) {

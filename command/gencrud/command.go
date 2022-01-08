@@ -9,6 +9,7 @@ import (
 type ObjTemplate struct {
 	PackagePath string
 	EntityName  string
+	DomainName  string
 }
 
 func Run(inputs ...string) error {
@@ -31,6 +32,7 @@ func Run(inputs ...string) error {
 	obj := &ObjTemplate{
 		PackagePath: utils.GetPackagePath(),
 		EntityName:  entityName,
+		DomainName:  domainName,
 	}
 
 	fileRenamer := map[string]string{
@@ -38,7 +40,12 @@ func Run(inputs ...string) error {
 		"entityname": utils.LowerCase(entityName),
 	}
 
-	err := utils.CreateEverythingExactly("templates/", "usecase", fileRenamer, obj, utils.AppTemplates)
+	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
+	if err != nil {
+		return err
+	}
+
+	err = utils.CreateEverythingExactly("templates/", "crud", fileRenamer, obj, utils.AppTemplates)
 	if err != nil {
 		return err
 	}

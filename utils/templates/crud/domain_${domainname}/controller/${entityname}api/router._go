@@ -1,17 +1,18 @@
-package restapi
+package {{LowerCase .EntityName}}api
 
 import (
-	"{{.PackagePath}}/usecase/{{LowerCase .EntityName}}create"
-	"{{.PackagePath}}/usecase/{{LowerCase .EntityName}}delete"
-	"{{.PackagePath}}/usecase/{{LowerCase .EntityName}}readall"
-	"{{.PackagePath}}/usecase/{{LowerCase .EntityName}}readone"
-	"{{.PackagePath}}/usecase/{{LowerCase .EntityName}}update"
-
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}create"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}delete"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readall"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readone"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}update"
+    "{{.PackagePath}}/shared/infrastructure/logger"
 	"github.com/gin-gonic/gin"
 )
 
 type Controller struct {
-	Router                 gin.IRouter
+	Router gin.IRouter
+	Log logger.Logger
 	{{PascalCase .EntityName}}CreateInport  {{LowerCase .EntityName}}create.Inport
 	{{PascalCase .EntityName}}DeleteInport  {{LowerCase .EntityName}}delete.Inport
 	{{PascalCase .EntityName}}ReadAllInport {{LowerCase .EntityName}}readall.Inport

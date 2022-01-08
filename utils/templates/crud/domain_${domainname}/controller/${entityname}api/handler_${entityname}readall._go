@@ -1,13 +1,14 @@
-package restapi
+package {{LowerCase .EntityName}}api
 
 import (
+    "context"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 
-	"{{.PackagePath}}/infrastructure/log"
-	"{{.PackagePath}}/infrastructure/util"
-	"{{.PackagePath}}/usecase/{{LowerCase .EntityName}}readall"
+	"{{.PackagePath}}/shared/infrastructure/logger"
+	"{{.PackagePath}}/shared/infrastructure/util"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readall"
 )
 
 // {{LowerCase .EntityName}}ReadAllHandler ...
@@ -34,13 +35,13 @@ func (r *Controller) {{LowerCase .EntityName}}ReadAllHandler(inputPort {{LowerCa
 
 	return func(c *gin.Context) {
 
-		traceID := util.GenerateID()
+		traceID := util.GenerateID(16)
 
-		ctx := log.Context(c.Request.Context(), traceID)
+		ctx := logger.SetTraceID(context.Background(), traceID)
 
 		var jsonReq request
 		if err := c.Bind(&jsonReq); err != nil {
-			log.Error(ctx, err.Error())
+			r.Log.Error(ctx, err.Error())
 			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
 			return
 		}
@@ -69,11 +70,11 @@ func (r *Controller) {{LowerCase .EntityName}}ReadAllHandler(inputPort {{LowerCa
 			req.DateEnd = &dateEnd
 		}
 
-		log.Info(ctx, util.MustJSON(req))
+		r.Log.Info(ctx, util.MustJSON(req))
 
 		res, err := inputPort.Execute(ctx, req)
 		if err != nil {
-			log.Error(ctx, err.Error())
+			r.Log.Error(ctx, err.Error())
 			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
 			return
 		}
@@ -90,7 +91,7 @@ func (r *Controller) {{LowerCase .EntityName}}ReadAllHandler(inputPort {{LowerCa
 			})
 		}
 
-		log.Info(ctx, util.MustJSON(jsonRes))
+		r.Log.Info(ctx, util.MustJSON(jsonRes))
 		c.JSON(http.StatusOK, NewSuccessResponse(jsonRes, traceID))
 
 	}

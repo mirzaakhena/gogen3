@@ -1,24 +1,25 @@
-package localdb
+package {{LowerCase .EntityName}}gateway
 
 import (
 	"context"
 	"fmt"
 	gonanoid "github.com/matoous/go-nanoid/v2"
-	"{{.PackagePath}}/model/entity"
-	"{{.PackagePath}}/model/repository"
-	"{{.PackagePath}}/model/vo"
-	"{{.PackagePath}}/infrastructure/database"
-	"{{.PackagePath}}/infrastructure/log"
-	"{{.PackagePath}}/infrastructure/util"
+	"{{.PackagePath}}/domain_{{LowerCase .DomainName}}/model/entity"
+	"{{.PackagePath}}/domain_{{LowerCase .DomainName}}/model/repository"
+	"{{.PackagePath}}/domain_{{LowerCase .DomainName}}/model/vo"
+	"{{.PackagePath}}/shared/infrastructure/database"
+	"{{.PackagePath}}/shared/infrastructure/logger"
+	"{{.PackagePath}}/shared/infrastructure/util"
 )
 
 type gateway struct {
 	*database.GormWithTransactionImpl
 	*database.GormWithoutTransactionImpl
+	log logger.Logger
 }
 
 // NewGateway ...
-func NewGateway() *gateway {
+func NewGateway(log logger.Logger) *gateway {
 
 	db := database.NewSQLiteDefault()
 
@@ -29,12 +30,13 @@ func NewGateway() *gateway {
 
 	return &gateway{
 		GormWithoutTransactionImpl: database.NewGormWithoutTransactionImpl(db),
-		GormWithTransactionImpl:    database.NewGormWithTransactionImpl(db),
+		GormWithTransactionImpl: database.NewGormWithTransactionImpl(db),
+		log: log,
 	}
 }
 
 func (r gateway) GenerateID(ctx context.Context) string {
-	log.Info(ctx, "called")
+	r.log.Info(ctx, "called")
 
 	id, err := gonanoid.Generate("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890", 4)
 	if err != nil {
@@ -45,7 +47,7 @@ func (r gateway) GenerateID(ctx context.Context) string {
 }
 
 func (r gateway) Save{{PascalCase .EntityName}}(ctx context.Context, obj *entity.{{PascalCase .EntityName}}) error {
-	log.Info(ctx, "called")
+	r.log.Info(ctx, "called")
 
 	db, err := database.ExtractDB(ctx)
 	if err != nil {
@@ -70,7 +72,7 @@ func (r gateway) Save{{PascalCase .EntityName}}(ctx context.Context, obj *entity
 
 func (r gateway) UpdateName{{PascalCase .EntityName}}(ctx context.Context, id string, makeChanges func(obj *entity.{{PascalCase .EntityName}}) error) error {
 
-	log.Info(ctx, "called")
+	r.log.Info(ctx, "called")
 
 	db, err := database.ExtractDB(ctx)
 	if err != nil {
@@ -106,7 +108,7 @@ func (r gateway) UpdateName{{PascalCase .EntityName}}(ctx context.Context, id st
 }
 
 func (r gateway) Delete{{PascalCase .EntityName}}(ctx context.Context, {{LowerCase .EntityName}}ID string) error {
-	log.Info(ctx, "called")
+	r.log.Info(ctx, "called")
 
 	db, err := database.ExtractDB(ctx)
 	if err != nil {
@@ -122,7 +124,7 @@ func (r gateway) Delete{{PascalCase .EntityName}}(ctx context.Context, {{LowerCa
 }
 
 func (r gateway) FindAll{{PascalCase .EntityName}}(ctx context.Context, req repository.FindAll{{PascalCase .EntityName}}RepoRequest) ([]*entity.{{PascalCase .EntityName}}, int64, error) {
-	log.Info(ctx, "called")
+	r.log.Info(ctx, "called")
 
 	var count int64
 
@@ -171,7 +173,7 @@ func (r gateway) FindAll{{PascalCase .EntityName}}(ctx context.Context, req repo
 			return nil, 0, err
 		}
 
-		log.Info(ctx, "\n\n %v\n\n", util.MustJSON(sm))
+		r.log.Info(ctx, "\n\n %v\n\n", util.MustJSON(sm))
 
 		result{{PascalCase .EntityName}} := r.mapTableToObject(sm)
 
@@ -182,7 +184,7 @@ func (r gateway) FindAll{{PascalCase .EntityName}}(ctx context.Context, req repo
 }
 
 func (r gateway) FindOne{{PascalCase .EntityName}}(ctx context.Context, {{LowerCase .EntityName}}ID string) (*entity.{{PascalCase .EntityName}}, error) {
-	log.Info(ctx, "called")
+	r.log.Info(ctx, "called")
 
 	db, err := database.ExtractDB(ctx)
 	if err != nil {

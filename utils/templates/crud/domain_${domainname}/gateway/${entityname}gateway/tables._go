@@ -1,4 +1,4 @@
-package localdb
+package {{LowerCase .EntityName}}gateway
 
 import (
 	"gorm.io/gorm"

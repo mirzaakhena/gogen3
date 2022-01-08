@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gogen3/command/genapplication"
 	"gogen3/command/gencontroller"
+	"gogen3/command/gencrud"
 	"gogen3/command/genentity"
 	"gogen3/command/generror"
 	"gogen3/command/gengateway"
@@ -30,6 +31,7 @@ func main() {
 		"error":       generror.Run,
 		"test":        gentest.Run,
 		"application": genapplication.Run,
+		"crud":        gencrud.Run,
 	}
 
 	flag.Parse()

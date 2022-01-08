@@ -1,8 +1,8 @@
 package entity
 
 import (
-	"{{.PackagePath}}/model/domerror"
-	"{{.PackagePath}}/model/vo"
+	"{{.PackagePath}}/domain_{{.DomainName}}/model/errorenum"
+	"{{.PackagePath}}/domain_{{.DomainName}}/model/vo"
 	"strings"
 	"time"
 )
@@ -42,13 +42,13 @@ func New{{PascalCase .EntityName}}(req {{PascalCase .EntityName}}Request) (*{{Pa
 func (r {{PascalCase .EntityName}}) Validate() error {
 
 	if len(strings.TrimSpace(r.Name)) == 0 {
-		return domerror.NameMustNotEmpty
+		return errorenum.NameMustNotEmpty
 	}
 
 	date, _ := time.Parse("2006-01-02", "2022-01-01")
 
 	if r.Date.Equal(date) {
-		return domerror.InvalidDate
+		return errorenum.InvalidDate
 	}
 
 	return nil

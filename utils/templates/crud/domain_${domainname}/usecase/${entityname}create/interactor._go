@@ -3,7 +3,7 @@ package {{LowerCase .EntityName}}create
 import (
 	"context"
 	"{{.PackagePath}}/domain_{{.DomainName}}/model/entity"
-	"{{.PackagePath}}/domain_{{.DomainName}}/model/service"
+	sharedservice "{{.PackagePath}}/shared/model/service"
 )
 
 //go:generate mockery --name Outport -output mocks/
@@ -24,7 +24,7 @@ func (r *{{PascalCase .EntityName}}CreateInteractor) Execute(ctx context.Context
 
 	res := &InportResponse{}
 
-	err := service.WithTransaction(ctx, r.outport, func(ctx context.Context) error {
+	err := sharedservice.WithTransaction(ctx, r.outport, func(ctx context.Context) error {
 
 		randomID := r.outport.GenerateID(ctx)
 

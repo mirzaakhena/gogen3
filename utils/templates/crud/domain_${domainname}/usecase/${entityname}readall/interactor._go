@@ -2,8 +2,8 @@ package {{LowerCase .EntityName}}readall
 
 import (
 	"context"
-	"{{.PackagePath}}/model/repository"
-	"{{.PackagePath}}/model/service"
+	"{{.PackagePath}}/domain_{{.DomainName}}/model/repository"
+	sharedservice "{{.PackagePath}}/shared/model/service"
 )
 
 //go:generate mockery --name Outport -output mocks/
@@ -24,7 +24,7 @@ func (r *{{PascalCase .EntityName}}ReadAllInteractor) Execute(ctx context.Contex
 
 	res := &InportResponse{}
 
-	err := service.WithoutTransaction(ctx, r.outport, func(ctx context.Context) error {
+	err := sharedservice.WithoutTransaction(ctx, r.outport, func(ctx context.Context) error {
 
 		{{PascalCase .EntityName}}Objs, count, err := r.outport.FindAll{{PascalCase .EntityName}}(ctx, repository.FindAll{{PascalCase .EntityName}}RepoRequest{
 			Page:      req.Page,
