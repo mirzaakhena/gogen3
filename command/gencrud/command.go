@@ -2,6 +2,7 @@ package gencrud
 
 import (
 	"fmt"
+	"go/token"
 	"gogen3/utils"
 )
 
@@ -48,6 +49,12 @@ func Run(inputs ...string) error {
 	err = utils.CreateEverythingExactly("templates/", "crud", fileRenamer, obj, utils.AppTemplates)
 	if err != nil {
 		return err
+	}
+
+	// inject to main.go
+	{
+		fset := token.NewFileSet()
+		utils.InjectToMain(fset, fmt.Sprintf("App%s", entityName))
 	}
 
 	return nil
