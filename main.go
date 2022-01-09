@@ -15,6 +15,7 @@ import (
 	"gogen3/command/genusecase"
 	"gogen3/command/genvalueobject"
 	"gogen3/command/genvaluestring"
+	"gogen3/command/genwebapp"
 )
 
 func main() {
@@ -32,6 +33,7 @@ func main() {
 		"test":        gentest.Run,
 		"application": genapplication.Run,
 		"crud":        gencrud.Run,
+		"webapp":      genwebapp.Run,
 	}
 
 	flag.Parse()
@@ -52,8 +54,7 @@ func main() {
 			"  gogen enum\n" +
 			"  gogen error\n" +
 			"  gogen crud\n" +
-			"  gogen webapp\n" +
-			"  gogen endtoend\n")
+			"  gogen webapp\n")
 		return
 	}
 
