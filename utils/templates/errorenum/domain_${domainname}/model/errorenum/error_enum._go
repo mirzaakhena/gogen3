@@ -1,5 +1,5 @@
 package errorenum
 
 const (
-	SomethingError ErrorType = "ER0000 something error" // sample error
+	SomethingError apperror.ErrorType = "ER0000 something error" // sample error
 )

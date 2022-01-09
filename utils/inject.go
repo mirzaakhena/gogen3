@@ -214,13 +214,65 @@ func InjectToMain(fset *token.FileSet, applicationName string) {
 						return
 					}
 				}
-				{
-					err := printer.Fprint(os.Stdout, fset, astFile)
-					if err != nil {
-						return
-					}
-				}
+				//{
+				//	err := printer.Fprint(os.Stdout, fset, astFile)
+				//	if err != nil {
+				//		return
+				//	}
+				//}
 			}
 		}
 	}
+}
+
+func InjectToErrorEnum(fset *token.FileSet) {
+
+	astFile, err := parser.ParseFile(fset, "model/errorenum/error_enum.go", nil, parser.ParseComments)
+	if err != nil {
+		fmt.Printf("%v\n", err.Error())
+		os.Exit(1)
+	}
+
+	// in every declaration like type, func, const
+	for _, decl := range astFile.Decls {
+
+		genDecl := decl.(*ast.GenDecl)
+
+		if genDecl.Tok != token.CONST {
+			continue
+		}
+
+		genDecl.Specs = append(genDecl.Specs, &ast.ValueSpec{
+			Names:  []*ast.Ident{{Name: "NewEnumError"}},
+			Type:   &ast.SelectorExpr{X: &ast.Ident{Name: "apperror"}, Sel: &ast.Ident{Name: "ErrorType"}},
+			Values: []ast.Expr{&ast.BasicLit{Kind: token.STRING, Value: "\"ER1000 Noalala\""}},
+		})
+
+		//ast.Print(fset, decl)
+
+	}
+
+	{
+		f, err := os.Create("model/errorenum/error_enum.go")
+		if err != nil {
+			return
+		}
+		defer func(f *os.File) {
+			err := f.Close()
+			if err != nil {
+				os.Exit(1)
+			}
+		}(f)
+		err = printer.Fprint(f, fset, astFile)
+		if err != nil {
+			return
+		}
+	}
+
+	//{
+	//	err := printer.Fprint(os.Stdout, fset, astFile)
+	//	if err != nil {
+	//		return
+	//	}
+	//}
 }
