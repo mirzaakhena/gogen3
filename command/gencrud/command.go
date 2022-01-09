@@ -46,6 +46,8 @@ func Run(inputs ...string) error {
 		return err
 	}
 
+	// TODO check existing entity. if exist, read all the field else create new one
+
 	err = utils.CreateEverythingExactly("templates/", "crud", fileRenamer, obj, utils.AppTemplates)
 	if err != nil {
 		return err

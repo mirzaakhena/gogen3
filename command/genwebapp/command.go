@@ -1,0 +1,48 @@
+package genwebapp
+
+import (
+	"fmt"
+	"gogen3/utils"
+)
+
+// ObjTemplate ...
+type ObjTemplate struct {
+	EntityName string
+	DomainName string
+}
+
+func Run(inputs ...string) error {
+
+	if len(inputs) < 2 {
+		err := fmt.Errorf("\n" +
+			"   # Create a complete CRUD webapp ui for specific entity\n" +
+			"   gogen webapp orderservice Product\n" +
+			"     'orderservice' is a domain name\n" +
+			"     'Product' is an existing entity name\n" +
+			"\n")
+
+		return err
+	}
+
+	domainName := inputs[0]
+
+	entityName := inputs[1]
+
+	obj := &ObjTemplate{
+		EntityName: entityName,
+		DomainName: domainName,
+	}
+
+	fileRenamer := map[string]string{
+		"domainname": utils.LowerCase(domainName),
+		"entityname": utils.LowerCase(entityName),
+	}
+
+	err := utils.CreateEverythingExactly("templates/", "webapp", fileRenamer, obj, utils.AppTemplates)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
