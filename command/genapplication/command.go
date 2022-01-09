@@ -504,23 +504,26 @@ func injectToMain(fset *token.FileSet, rootFolderName, applicationName string) {
 
 				//ast.Print(fset, compositeLit)
 
-				var lastPost token.Pos
+				var valuePos token.Pos
+				if len(compositeLit.Elts) == 0 {
+					valuePos = compositeLit.Lbrace + 3
+				} else {
+					valuePos = compositeLit.Elts[len(compositeLit.Elts)-1].End() + 4
+				}
+
 				for _, elt := range compositeLit.Elts {
 					kvExpr := elt.(*ast.KeyValueExpr)
 					callExpr := kvExpr.Value.(*ast.CallExpr)
 					selectorExpr := callExpr.Fun.(*ast.SelectorExpr)
-
 					if selectorExpr.Sel.String() == fmt.Sprintf("New%s", utils.PascalCase(applicationName)) {
 						return
 					}
-
-					lastPost = kvExpr.Key.Pos()
 				}
 
 				compositeLit.Elts = append(compositeLit.Elts, &ast.KeyValueExpr{
 					Key: &ast.BasicLit{
 						Kind:     token.STRING,
-						ValuePos: lastPost + 100,
+						ValuePos: valuePos,
 						Value:    fmt.Sprintf("\"%s\"", utils.LowerCase(applicationName)),
 					},
 					Value: &ast.CallExpr{
@@ -529,9 +532,12 @@ func injectToMain(fset *token.FileSet, rootFolderName, applicationName string) {
 							Sel: &ast.Ident{Name: fmt.Sprintf("New%s", utils.PascalCase(applicationName))},
 						},
 					},
+					Colon: valuePos,
 				})
 
-				compositeLit.Rbrace = lastPost + 100
+				compositeLit.Rbrace = valuePos + 2
+
+				ast.Print(fset, compositeLit)
 
 				{
 					f, err := os.Create("main.go")
