@@ -10,6 +10,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -225,9 +226,9 @@ func InjectToMain(fset *token.FileSet, applicationName string) {
 	}
 }
 
-func InjectToErrorEnum(fset *token.FileSet) {
+func InjectToErrorEnum(fset *token.FileSet, filepath string, errorName, separator string) {
 
-	astFile, err := parser.ParseFile(fset, "model/errorenum/error_enum.go", nil, parser.ParseComments)
+	astFile, err := parser.ParseFile(fset, filepath, nil, parser.ParseComments)
 	if err != nil {
 		fmt.Printf("%v\n", err.Error())
 		os.Exit(1)
@@ -242,10 +243,45 @@ func InjectToErrorEnum(fset *token.FileSet) {
 			continue
 		}
 
+		var errorNumber = 1000
+		for _, spec := range genDecl.Specs {
+
+			valueSpec := spec.(*ast.ValueSpec)
+			if len(valueSpec.Values) == 0 {
+				break
+			}
+
+			fmt.Printf("masa sih %s == %s : %v\n", strings.ToLower(valueSpec.Names[0].String()), strings.ToLower(errorName), strings.ToLower(valueSpec.Names[0].String()) == strings.ToLower(errorName))
+
+			if len(valueSpec.Names) > 0 && strings.ToLower(valueSpec.Names[0].String()) == strings.ToLower(errorName) {
+				fmt.Printf("error code %s already exist\n", errorName)
+				return
+			}
+
+			basicList := valueSpec.Values[0].(*ast.BasicLit)
+			errorCodeWithMessage := strings.Split(basicList.Value, " ")
+			if len(errorCodeWithMessage) == 0 {
+				continue
+			}
+
+			errorCodeOnly := strings.Split(errorCodeWithMessage[0], separator)
+			if len(errorCodeOnly) < 2 || errorCodeOnly[1] == "" {
+				continue
+			}
+
+			n, err := strconv.Atoi(errorCodeOnly[1])
+			if err != nil {
+				continue
+			}
+			errorNumber = n
+		}
+
+		errorValue := fmt.Sprintf("\"%s%04d %s\"", separator, errorNumber+1, SpaceCase(errorName))
+
 		genDecl.Specs = append(genDecl.Specs, &ast.ValueSpec{
-			Names:  []*ast.Ident{{Name: "NewEnumError"}},
+			Names:  []*ast.Ident{{Name: PascalCase(errorName)}},
 			Type:   &ast.SelectorExpr{X: &ast.Ident{Name: "apperror"}, Sel: &ast.Ident{Name: "ErrorType"}},
-			Values: []ast.Expr{&ast.BasicLit{Kind: token.STRING, Value: "\"ER1000 Noalala\""}},
+			Values: []ast.Expr{&ast.BasicLit{Kind: token.STRING, Value: errorValue}},
 		})
 
 		//ast.Print(fset, decl)
@@ -253,7 +289,7 @@ func InjectToErrorEnum(fset *token.FileSet) {
 	}
 
 	{
-		f, err := os.Create("model/errorenum/error_enum.go")
+		f, err := os.Create(filepath)
 		if err != nil {
 			return
 		}
