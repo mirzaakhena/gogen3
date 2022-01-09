@@ -3,14 +3,13 @@ package main
 import (
   "flag"
   "fmt"
-  "{{.PackagePath}}/domain_{{.DomainName}}/application"
+  "{{.PackagePath}}/application"
   "{{.PackagePath}}/shared/driver"
 )
 
 func main() {
 
   appMap := map[string]func() driver.RegistryContract{
-    "{{LowerCase .ApplicationName}}": application.New{{PascalCase .ApplicationName}}(),
   }
 
   flag.Parse()

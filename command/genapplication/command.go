@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/parser"
+	"go/printer"
 	"go/token"
 	"gogen3/utils"
 	"os"
@@ -179,6 +180,12 @@ func Run(inputs ...string) error {
 		}
 
 	} //---------
+
+	// inject to main.go
+	{
+		fset := token.NewFileSet()
+		injectToMain(fset, "", applicationName)
+	}
 
 	return nil
 
@@ -428,6 +435,129 @@ func FindAllUsecaseInportNameFromController(domainName, controllerName string) (
 	}
 
 	return res, nil
+}
+
+func injectToMain(fset *token.FileSet, rootFolderName, applicationName string) {
+
+	astFile, err := parser.ParseFile(fset, "main.go", nil, parser.ParseComments)
+	if err != nil {
+		fmt.Printf("%v\n", err.Error())
+		os.Exit(1)
+	}
+
+	//pkgs, err := parser.ParseDir(fset, rootFolderName, nil, parser.ParseComments)
+	//if err != nil {
+	//	fmt.Printf("%v\n", err.Error())
+	//	os.Exit(1)
+	//}
+
+	// in every declaration like type, func, const
+	for _, decl := range astFile.Decls {
+
+		// focus only to type
+		funcDecl, ok := decl.(*ast.FuncDecl)
+		if !ok || funcDecl.Name.String() != "main" {
+			continue
+		}
+
+		for _, stmts := range funcDecl.Body.List {
+
+			assignStmt, ok := stmts.(*ast.AssignStmt)
+			if !ok {
+				continue
+			}
+
+			foundRegistryContract := false
+			for _, rhs := range assignStmt.Rhs {
+
+				compositeLit, ok := rhs.(*ast.CompositeLit)
+				if !ok {
+					continue
+				}
+
+				// map dengan key string
+				mapType := compositeLit.Type.(*ast.MapType)
+				if mapType.Key.(*ast.Ident).String() != "string" {
+					continue
+				}
+
+				// map dengan value func
+				funcType, ok := mapType.Value.(*ast.FuncType)
+				if !ok {
+					continue
+				}
+
+				// func yang mereturn RegistryContract
+				for _, resultField := range funcType.Results.List {
+					selectorExpr := resultField.Type.(*ast.SelectorExpr)
+
+					if selectorExpr.Sel.String() == "RegistryContract" {
+						foundRegistryContract = true
+						break
+					}
+
+				}
+
+				if !foundRegistryContract {
+					continue
+				}
+
+				//ast.Print(fset, compositeLit)
+
+				var lastPost token.Pos
+				for _, elt := range compositeLit.Elts {
+					kvExpr := elt.(*ast.KeyValueExpr)
+					callExpr := kvExpr.Value.(*ast.CallExpr)
+					selectorExpr := callExpr.Fun.(*ast.SelectorExpr)
+
+					if selectorExpr.Sel.String() == fmt.Sprintf("New%s", utils.PascalCase(applicationName)) {
+						return
+					}
+
+					lastPost = kvExpr.Key.Pos()
+				}
+
+				compositeLit.Elts = append(compositeLit.Elts, &ast.KeyValueExpr{
+					Key: &ast.BasicLit{
+						Kind:     token.STRING,
+						ValuePos: lastPost + 100,
+						Value:    fmt.Sprintf("\"%s\"", utils.LowerCase(applicationName)),
+					},
+					Value: &ast.CallExpr{
+						Fun: &ast.SelectorExpr{
+							X:   &ast.Ident{Name: "application"},
+							Sel: &ast.Ident{Name: fmt.Sprintf("New%s", utils.PascalCase(applicationName))},
+						},
+					},
+				})
+
+				compositeLit.Rbrace = lastPost + 100
+
+				{
+					f, err := os.Create("main.go")
+					if err != nil {
+						return
+					}
+					defer func(f *os.File) {
+						err := f.Close()
+						if err != nil {
+							os.Exit(1)
+						}
+					}(f)
+					err = printer.Fprint(f, fset, astFile)
+					if err != nil {
+						return
+					}
+				}
+				{
+					err := printer.Fprint(os.Stdout, fset, astFile)
+					if err != nil {
+						return
+					}
+				}
+			}
+		}
+	}
 }
 
 func getControllerFolder(domainName string) string {
