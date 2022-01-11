@@ -9,6 +9,7 @@ import (
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .UsecaseName}}"
 	"{{.PackagePath}}/shared/infrastructure/logger"
 	"{{.PackagePath}}/shared/infrastructure/util"
+	"{{.PackagePath}}/shared/model/payload"
 )
 
 // {{CamelCase .UsecaseName}}Handler ...
@@ -29,7 +30,7 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 		var jsonReq request
 		if err := c.BindJSON(&jsonReq); err != nil {
 			r.log.Error(ctx, err.Error())
-			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
+			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return
 		}
 
@@ -41,7 +42,7 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 		res, err := inputPort.Execute(ctx, req)
 		if err != nil {
 			r.log.Error(ctx, err.Error())
-			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
+			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return
 		}
 
@@ -50,7 +51,7 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 		_ = res
 
 		r.log.Info(ctx, util.MustJSON(jsonRes))
-		c.JSON(http.StatusOK, NewSuccessResponse(jsonRes, traceID))
+		c.JSON(http.StatusOK, payload.NewSuccessResponse(jsonRes, traceID))
 
 	}
 }

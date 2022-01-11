@@ -9,6 +9,7 @@ import (
 	"{{.PackagePath}}/shared/infrastructure/logger"
 	"{{.PackagePath}}/shared/infrastructure/util"
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readone"
+	"{{.PackagePath}}/shared/model/payload"
 )
 
 // {{LowerCase .EntityName}}ReadOneHandler ...
@@ -32,7 +33,7 @@ func (r *Controller) {{LowerCase .EntityName}}ReadOneHandler(inputPort {{LowerCa
 		//var jsonReq request
 		//if err := c.BindJSON(&jsonReq); err != nil {
 		//	log.Error(ctx, err.Error())
-		//	c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
+		//	c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 		//	return
 		//}
 
@@ -44,7 +45,7 @@ func (r *Controller) {{LowerCase .EntityName}}ReadOneHandler(inputPort {{LowerCa
 		res, err := inputPort.Execute(ctx, req)
 		if err != nil {
 			r.Log.Error(ctx, err.Error())
-			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
+			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return
 		}
 
@@ -55,7 +56,7 @@ func (r *Controller) {{LowerCase .EntityName}}ReadOneHandler(inputPort {{LowerCa
 		jsonRes.ID = res.ID
 
 		r.Log.Info(ctx, util.MustJSON(jsonRes))
-		c.JSON(http.StatusOK, NewSuccessResponse(jsonRes, traceID))
+		c.JSON(http.StatusOK, payload.NewSuccessResponse(jsonRes, traceID))
 
 	}
 }

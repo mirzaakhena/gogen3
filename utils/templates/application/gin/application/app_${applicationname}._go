@@ -20,9 +20,11 @@ func New{{PascalCase .ApplicationName}}() func() driver.RegistryContract {
 
 		appID := util.GenerateID(4)
 
-		log := logger.NewSimpleJSONLogger("{{LowerCase .ApplicationName}}", appID)
+		appData := driver.NewApplicationData("{{LowerCase .ApplicationName}}", appID)
 
-        httpHandler := server.NewGinHTTPHandlerDefault(log)
+		log := logger.NewSimpleJSONLogger(appData)
+
+        httpHandler := server.NewGinHTTPHandlerDefault(log, appData)
 
         datasource := {{LowerCase .GatewayName}}.NewGateway(log)
 

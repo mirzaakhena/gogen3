@@ -1,4 +1,4 @@
-package {{LowerCase .ControllerName}}
+package payload
 
 import (
     "{{.PackagePath}}/shared/model/apperror"

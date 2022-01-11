@@ -4,16 +4,11 @@ import (
     "context"
     "fmt"
     "time"
+    "{{.PackagePath}}/shared/driver"
 )
 
-func NewSimpleJSONLogger(appName, appInstanceID string) Logger {
-	return &simpleJSONLoggerImpl{
-		ApplicationData: ApplicationData{
-			AppName:       appName,
-			AppInstanceID: appInstanceID,
-			StartTime:     time.Now().Format("2006-01-02 15:04:05"),
-		},
-	}
+func NewSimpleJSONLogger(appData driver.ApplicationData) Logger {
+	return &simpleJSONLoggerImpl{AppData: appData}
 }
 
 type jsonLogModel struct {
@@ -30,9 +25,9 @@ func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid inter
 
 	if flag == "ERROR" {
 		return toJsonString(jsonLogModel{
-			AppName:   lg.AppName,
-			AppInstID: lg.AppInstanceID,
-			Start:     lg.StartTime,
+			AppName:   lg.AppData.AppName,
+			AppInstID: lg.AppData.AppInstanceID,
+			Start:     lg.AppData.StartTime,
 			Severity:  flag,
 			Message:   fmt.Sprintf("%v %v %v", trid, loc, msg),
 			Location:  loc,
@@ -41,9 +36,9 @@ func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid inter
 	}
 
 	return toJsonString(jsonLogModel{
-		AppName:   lg.AppName,
-		AppInstID: lg.AppInstanceID,
-		Start:     lg.StartTime,
+        AppName:   lg.AppData.AppName,
+        AppInstID: lg.AppData.AppInstanceID,
+        Start:     lg.AppData.StartTime,
 		Severity:  flag,
 		Message:   fmt.Sprintf("%v %v", trid, msg),
 		Location:  loc,
@@ -52,7 +47,7 @@ func newJSONLogModel(lg *simpleJSONLoggerImpl, flag, loc string, msg, trid inter
 }
 
 type simpleJSONLoggerImpl struct {
-	ApplicationData
+    AppData driver.ApplicationData
 }
 
 func (l simpleJSONLoggerImpl) Info(ctx context.Context, message string, args ...interface{}) {
@@ -63,10 +58,6 @@ func (l simpleJSONLoggerImpl) Info(ctx context.Context, message string, args ...
 func (l simpleJSONLoggerImpl) Error(ctx context.Context, message string, args ...interface{}) {
 	messageWithArgs := fmt.Sprintf(message, args...)
 	l.printLog(ctx, "ERROR", messageWithArgs)
-}
-
-func (l simpleJSONLoggerImpl) GetApplicationData() ApplicationData {
-	return l.ApplicationData
 }
 
 func (l simpleJSONLoggerImpl) printLog(ctx context.Context, flag string, data interface{}) {

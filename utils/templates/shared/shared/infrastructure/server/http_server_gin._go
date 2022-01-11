@@ -8,10 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"{{.PackagePath}}/shared/infrastructure/logger"
+	"{{.PackagePath}}/shared/driver"
 )
 
-func NewGinHTTPHandlerDefault(log logger.Logger) GinHTTPHandler {
-	return NewGinHTTPHandler(log, ":8080")
+func NewGinHTTPHandlerDefault(log logger.Logger, appData driver.ApplicationData) GinHTTPHandler {
+	return NewGinHTTPHandler(log, ":8080", appData)
 }
 
 // GinHTTPHandler will define basic HTTP configuration with gracefully shutdown
@@ -20,13 +21,13 @@ type GinHTTPHandler struct {
 	Router *gin.Engine
 }
 
-func NewGinHTTPHandler(log logger.Logger, address string) GinHTTPHandler {
+func NewGinHTTPHandler(log logger.Logger, address string, appData driver.ApplicationData) GinHTTPHandler {
 
 	router := gin.Default()
 
 	// PING API
 	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, log.GetApplicationData())
+		c.JSON(http.StatusOK, appData)
 	})
 
 	// CORS

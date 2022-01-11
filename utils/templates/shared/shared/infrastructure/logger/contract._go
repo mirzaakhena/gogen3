@@ -8,16 +8,9 @@ import (
     "strings"
 )
 
-type ApplicationData struct {
-	AppName       string `json:"appName"`
-	AppInstanceID string `json:"appInstanceID"`
-	StartTime     string `json:"startTime"`
-}
-
 type Logger interface {
 	Info(ctx context.Context, message string, args ...interface{})
 	Error(ctx context.Context, message string, args ...interface{})
-	GetApplicationData() ApplicationData
 }
 
 type traceDataType int

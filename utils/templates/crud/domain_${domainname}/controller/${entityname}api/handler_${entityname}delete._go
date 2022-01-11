@@ -9,6 +9,7 @@ import (
 	"{{.PackagePath}}/shared/infrastructure/logger"
 	"{{.PackagePath}}/shared/infrastructure/util"
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}delete"
+	"{{.PackagePath}}/shared/model/payload"
 )
 
 // {{LowerCase .EntityName}}DeleteHandler ...
@@ -29,7 +30,7 @@ func (r *Controller) {{LowerCase .EntityName}}DeleteHandler(inputPort {{LowerCas
 		//var jsonReq request
 		//if err := c.BindJSON(&jsonReq); err != nil {
 		//	r.Log.Error(ctx, err.Error())
-		//	c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
+		//	c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 		//	return
 		//}
 
@@ -41,7 +42,7 @@ func (r *Controller) {{LowerCase .EntityName}}DeleteHandler(inputPort {{LowerCas
 		res, err := inputPort.Execute(ctx, req)
 		if err != nil {
 			r.Log.Error(ctx, err.Error())
-			c.JSON(http.StatusBadRequest, NewErrorResponse(err, traceID))
+			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return
 		}
 
@@ -49,7 +50,7 @@ func (r *Controller) {{LowerCase .EntityName}}DeleteHandler(inputPort {{LowerCas
 		_ = res
 
 		r.Log.Info(ctx, util.MustJSON(jsonRes))
-		c.JSON(http.StatusOK, NewSuccessResponse(jsonRes, traceID))
+		c.JSON(http.StatusOK, payload.NewSuccessResponse(jsonRes, traceID))
 
 	}
 }
