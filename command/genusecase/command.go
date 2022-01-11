@@ -38,7 +38,12 @@ func Run(inputs ...string) error {
 		"domainname":  utils.LowerCase(domainName),
 	}
 
-	err := utils.CreateEverythingExactly("templates/", "usecase", fileRenamer, obj, utils.AppTemplates)
+	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
+	if err != nil {
+		return err
+	}
+
+	err = utils.CreateEverythingExactly("templates/", "usecase", fileRenamer, obj, utils.AppTemplates)
 	if err != nil {
 		return err
 	}

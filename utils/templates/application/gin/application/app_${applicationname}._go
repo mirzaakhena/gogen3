@@ -26,11 +26,12 @@ func New{{PascalCase .ApplicationName}}() func() driver.RegistryContract {
 
         httpHandler := server.NewGinHTTPHandlerDefault(log, appData)
 
-        datasource := {{LowerCase .GatewayName}}.NewGateway(log)
+        datasource := {{LowerCase .GatewayName}}.NewGateway(log, appData)
 
         return &{{CamelCase .ApplicationName}}{
             GinHTTPHandler: &httpHandler,
             Controller: &{{LowerCase .ControllerName}}.Controller{
+                Log: log,
                 Router: httpHandler.Router, {{range .UsecaseNames}}
                 {{PascalCase .}}Inport: {{LowerCase .}}.NewUsecase(datasource), {{end}}
             },

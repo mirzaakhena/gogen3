@@ -1,0 +1,47 @@
+package {{LowerCase .ControllerName}}
+
+import (
+	"context"
+	"encoding/json"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/consumedata"
+	"paxelmarket/shared/infrastructure/logger"
+	"paxelmarket/shared/infrastructure/messaging"
+	"paxelmarket/shared/infrastructure/util"
+	"paxelmarket/shared/model/event"
+	"paxelmarket/shared/model/payload"
+)
+
+// {{CamelCase .UsecaseName}}Handler ...
+func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .UsecaseName}}.Inport) messaging.HandleFunc {
+
+	return func(payload payload.Payload, err error) {
+
+		traceID := payload.TraceID
+
+		ctx := logger.SetTraceID(context.Background(), traceID)
+
+		var dataPayload event.OrderCreatedPayload
+		dbByte, err := json.Marshal(payload.Data)
+		if err != nil {
+			r.Log.Error(ctx, err.Error())
+			return
+		}
+		err = json.Unmarshal(dbByte, &dataPayload)
+		if err != nil {
+			r.Log.Error(ctx, err.Error())
+			return
+		}
+
+		var req {{LowerCase .UsecaseName}}.InportRequest
+		req.Message = dataPayload.Message
+
+		r.Log.Info(ctx, util.MustJSON(req))
+
+		_, err = inputPort.Execute(ctx, req)
+		if err != nil {
+			r.Log.Error(ctx, err.Error())
+			return
+		}
+
+	}
+}

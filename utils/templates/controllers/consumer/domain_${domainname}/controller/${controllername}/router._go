@@ -1,0 +1,22 @@
+package {{LowerCase .ControllerName}}
+
+import (
+	"github.com/gin-gonic/gin"
+
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/consumedata"
+	"{{.PackagePath}}/shared/infrastructure/messaging"
+	"{{.PackagePath}}/shared/model/event"
+	"{{.PackagePath}}/shared/infrastructure/logger"
+)
+
+type Controller struct {
+	Router            gin.IRouter
+	Messaging         messaging.Subscriber
+	Log               logger.Logger
+	{{PascalCase .UsecaseName}}Inport {{LowerCase .UsecaseName}}.Inport
+}
+
+// RegisterRouter registering all the router
+func (r *Controller) RegisterRouter() {
+	r.Messaging.Handle("", r.{{CamelCase .UsecaseName}}Handler(r.{{PascalCase .UsecaseName}}Inport))
+}

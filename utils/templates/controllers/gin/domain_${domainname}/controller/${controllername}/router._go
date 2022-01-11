@@ -10,7 +10,7 @@ import (
 
 type Controller struct {
 	Router gin.IRouter
-    log    logger.Logger
+    Log    logger.Logger
 }
 
 // RegisterRouter registering all the router

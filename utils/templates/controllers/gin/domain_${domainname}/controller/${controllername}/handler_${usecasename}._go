@@ -29,7 +29,7 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 
 		var jsonReq request
 		if err := c.BindJSON(&jsonReq); err != nil {
-			r.log.Error(ctx, err.Error())
+			r.Log.Error(ctx, err.Error())
 			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return
 		}
@@ -37,11 +37,11 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 		var req {{LowerCase .UsecaseName}}.InportRequest
 		// TODO assign value from jsonReq object to InportRequest req
 
-		r.log.Info(ctx, util.MustJSON(req))
+		r.Log.Info(ctx, util.MustJSON(req))
 
 		res, err := inputPort.Execute(ctx, req)
 		if err != nil {
-			r.log.Error(ctx, err.Error())
+			r.Log.Error(ctx, err.Error())
 			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return
 		}
@@ -50,7 +50,7 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 		// TODO assign value from InportResponse object to response jsonRes object
 		_ = res
 
-		r.log.Info(ctx, util.MustJSON(jsonRes))
+		r.Log.Info(ctx, util.MustJSON(jsonRes))
 		c.JSON(http.StatusOK, payload.NewSuccessResponse(jsonRes, traceID))
 
 	}
