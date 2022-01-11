@@ -37,7 +37,7 @@ func (r *GracefullyShutdown) RunWithGracefullyShutdown() {
 		}
 	}()
 
-	r.log.Info(context.Background(), "server is running ...")
+	r.log.Info(context.Background(), "server is running at %v", r.httpServer.Addr)
 
 	quit := make(chan os.Signal, 1)
 
