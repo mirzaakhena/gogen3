@@ -1,5 +1,14 @@
 package messaging
 
+import (
+	"encoding/json"
+	"github.com/nsqio/go-nsq"
+	"os"
+	"os/signal"
+	"{{.PackagePath}}/shared/model/payload"
+	"syscall"
+)
+
 type publisherImpl struct {
 	producer *nsq.Producer
 }
@@ -17,18 +26,13 @@ func NewPublisher(url string) *publisherImpl {
 }
 
 // Publish is
-func (m *publisherImpl) Publish(topic string, body []byte) error {
-	return m.producer.Publish(topic, body)
+func (m *publisherImpl) Publish(topic string, data payload.Payload) error {
+	dataInBytes, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return m.producer.Publish(topic, dataInBytes)
 }
-
-
-
-import (
-	"github.com/nsqio/go-nsq"
-	"os"
-	"os/signal"
-	"syscall"
-)
 
 type subscriberImpl struct {
 	channel     string
@@ -42,7 +46,7 @@ func NewSubscriber(channel string) Subscriber {
 	}
 }
 
-func (r *subscriberImpl) Handle(topic string, onReceived func(data []byte) error) {
+func (r *subscriberImpl) Handle(topic string, onReceived HandleFunc) {
 
 	nsqConfig := nsq.NewConfig()
 
@@ -52,7 +56,10 @@ func (r *subscriberImpl) Handle(topic string, onReceived func(data []byte) error
 	}
 
 	con.AddHandler(nsq.HandlerFunc(func(m *nsq.Message) error {
-		return onReceived(m.Body)
+		var data payload.Payload
+		err := json.Unmarshal(m.Body, &data)
+		onReceived(data, err)
+		return nil
 	}))
 
 	r.subscribers[topic] = con
