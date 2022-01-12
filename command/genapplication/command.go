@@ -80,7 +80,7 @@ func Run(inputs ...string) error {
 		if obj.ControllerName == nil {
 
 			// look up the controller by foldername
-			objControllers, err := FindAllObjController(domainName)
+			objControllers, err := findAllObjController(domainName)
 			if err != nil {
 				return err
 			}
@@ -106,7 +106,7 @@ func Run(inputs ...string) error {
 			var err error
 
 			// when controller name is given
-			objController, err = FindControllerByName(domainName, *obj.ControllerName)
+			objController, err = findControllerByName(domainName, *obj.ControllerName)
 			if err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func Run(inputs ...string) error {
 		if obj.GatewayName == nil {
 
 			// look up the gateway by foldername
-			objGateways, err := FindAllObjGateway(domainName)
+			objGateways, err := findAllObjGateway(domainName)
 			if err != nil {
 				return err
 			}
@@ -148,7 +148,7 @@ func Run(inputs ...string) error {
 			var err error
 
 			// when gateway name is given
-			objGateway, err = FindGatewayByName(domainName, *obj.GatewayName)
+			objGateway, err = findGatewayByName(domainName, *obj.GatewayName)
 			if err != nil {
 				return err
 			}
@@ -159,7 +159,7 @@ func Run(inputs ...string) error {
 			}
 		}
 
-		usecaseNames, err := FindAllUsecaseInportNameFromController(domainName, objController)
+		usecaseNames, err := findAllUsecaseInportNameFromController(domainName, objController)
 		if err != nil {
 			return err
 		}
@@ -190,7 +190,7 @@ func Run(inputs ...string) error {
 
 }
 
-func FindAllObjController(domainName string) ([]string, error) {
+func findAllObjController(domainName string) ([]string, error) {
 
 	controllerFolder := getControllerFolder(domainName)
 
@@ -210,7 +210,7 @@ func FindAllObjController(domainName string) ([]string, error) {
 			continue
 		}
 
-		g, err := FindControllerByName(domainName, d.Name())
+		g, err := findControllerByName(domainName, d.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -225,7 +225,7 @@ func FindAllObjController(domainName string) ([]string, error) {
 	return controllers, nil
 }
 
-func FindControllerByName(domainName, controllerName string) (string, error) {
+func findControllerByName(domainName, controllerName string) (string, error) {
 	folderName := fmt.Sprintf("%s/%s", getControllerFolder(domainName), strings.ToLower(controllerName))
 
 	fset := token.NewFileSet()
@@ -278,7 +278,7 @@ func FindControllerByName(domainName, controllerName string) (string, error) {
 	return "", nil
 }
 
-func FindAllObjGateway(domainName string) ([]string, error) {
+func findAllObjGateway(domainName string) ([]string, error) {
 
 	gatewayFolder := getGatewayFolder(domainName)
 
@@ -298,7 +298,7 @@ func FindAllObjGateway(domainName string) ([]string, error) {
 			continue
 		}
 
-		g, err := FindGatewayByName(domainName, d.Name())
+		g, err := findGatewayByName(domainName, d.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -313,7 +313,7 @@ func FindAllObjGateway(domainName string) ([]string, error) {
 	return gateways, nil
 }
 
-func FindGatewayByName(domainName, gatewayName string) (string, error) {
+func findGatewayByName(domainName, gatewayName string) (string, error) {
 	folderName := fmt.Sprintf("%s/%s", getGatewayFolder(domainName), strings.ToLower(gatewayName))
 
 	fset := token.NewFileSet()
@@ -366,7 +366,7 @@ func FindGatewayByName(domainName, gatewayName string) (string, error) {
 	return "", nil
 }
 
-func FindAllUsecaseInportNameFromController(domainName, controllerName string) ([]string, error) {
+func findAllUsecaseInportNameFromController(domainName, controllerName string) ([]string, error) {
 
 	res := make([]string, 0)
 

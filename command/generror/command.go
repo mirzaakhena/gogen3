@@ -55,23 +55,6 @@ func Run(inputs ...string) error {
 		utils.InjectToErrorEnum(fset, errEnumFile, errorName, "ER")
 	}
 
-	//errorLine, err := GetErrorLineTemplate()
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//templateHasBeenInjected, err := utils.PrintTemplate(string(errorLine), obj)
-	//if err != nil {
-	//	return err
-	//}
-	//
-
-	//
-	//bytes, err := injectCode(errEnumFile, templateHasBeenInjected)
-	//if err != nil {
-	//	return err
-	//}
-
 	// reformat outport._go
 	err = utils.Reformat(errEnumFile, nil)
 	if err != nil {
@@ -81,13 +64,3 @@ func Run(inputs ...string) error {
 	return nil
 
 }
-
-//// GetErrorLineTemplate ...
-//func GetErrorLineTemplate() ([]byte, error) {
-//	return utils.AppTemplates.ReadFile("templates/errorenum/domain_${domainname}/model/errorenum/~inject._go")
-//}
-//
-//// InjectCode ...
-//func injectCode(errEnumFile, templateCode string) ([]byte, error) {
-//	return utils.InjectCodeAtTheEndOfFile(errEnumFile, templateCode)
-//}

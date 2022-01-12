@@ -40,21 +40,10 @@ func main() {
 	cmd := flag.Arg(0)
 
 	if cmd == "" {
-		fmt.Printf("Try one of this command to learn how to use it\n" +
-			"  gogen usecase\n" +
-			"  gogen test\n" +
-			"  gogen repository\n" +
-			"  gogen service\n" +
-			"  gogen gateway\n" +
-			"  gogen controller\n" +
-			"  gogen registry\n" +
-			"  gogen entity\n" +
-			"  gogen genvaluestring\n" +
-			"  gogen valueobject\n" +
-			"  gogen enum\n" +
-			"  gogen error\n" +
-			"  gogen crud\n" +
-			"  gogen webapp\n")
+		fmt.Printf("Try one of this command to learn how to use it\n")
+		for k := range commandMap {
+			fmt.Printf("  gogen %s\n", k)
+		}
 		return
 	}
 

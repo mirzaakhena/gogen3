@@ -44,30 +44,6 @@ func Run(inputs ...string) error {
 		return err
 	}
 
-	//// code your usecase definition here ...
-	//_, err := utils.CreateFolderIfNotExist(fmt.Sprintf("domain/%s/model/vo", domainName))
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//{
-	//	outputFile := fmt.Sprintf("domain/%s/model/vo/%s.go", domainName, utils.SnakeCase(obj.ValueObjectName))
-	//	tem, err := getValueObjectTemplate()
-	//	if err != nil {
-	//		return err
-	//	}
-	//
-	//	_, err = utils.WriteFileIfNotExist(string(tem), outputFile, obj)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-
 	return nil
 
 }
-
-//// getValueObjectTemplate ...
-//func getValueObjectTemplate() ([]byte, error) {
-//	return utils.AppTemplates.ReadFile("templates/domain_${domainname}/model/vo/${valueobjectname}._go")
-//}
