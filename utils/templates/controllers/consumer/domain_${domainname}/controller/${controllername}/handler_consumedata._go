@@ -3,7 +3,7 @@ package {{LowerCase .ControllerName}}
 import (
 	"context"
 	"encoding/json"
-	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/consumedata"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .UsecaseName}}"
 	"paxelmarket/shared/infrastructure/logger"
 	"paxelmarket/shared/infrastructure/messaging"
 	"paxelmarket/shared/infrastructure/util"
@@ -20,7 +20,8 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 
 		ctx := logger.SetTraceID(context.Background(), traceID)
 
-		var dataPayload event.OrderCreatedPayload
+		// TODO define data type here
+		var dataPayload struct{}
 		dbByte, err := json.Marshal(payload.Data)
 		if err != nil {
 			r.Log.Error(ctx, err.Error())
@@ -33,7 +34,7 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 		}
 
 		var req {{LowerCase .UsecaseName}}.InportRequest
-		req.Message = dataPayload.Message
+		// TODO assign value here
 
 		r.Log.Info(ctx, util.MustJSON(req))
 
