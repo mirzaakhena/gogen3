@@ -58,15 +58,15 @@ func Run(inputs ...string) error {
 		obj.DriverName = utils.LowerCase(inputs[3])
 	}
 
+	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
+	if err != nil {
+		return err
+	}
+
 	fileRenamer := map[string]string{
 		"controllername": utils.LowerCase(controllerName),
 		"domainname":     utils.LowerCase(domainName),
 		"usecasename":    utils.LowerCase(usecaseName),
-	}
-
-	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
-	if err != nil {
-		return err
 	}
 
 	err = utils.CreateEverythingExactly("templates/controllers/", obj.DriverName, fileRenamer, obj, utils.AppTemplates)

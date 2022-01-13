@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"gogen3/command/genapplication"
-	"gogen3/command/gencontroller"
+	"gogen3/command/gencontroller2"
 	"gogen3/command/gencrud"
 	"gogen3/command/genentity"
 	"gogen3/command/generror"
@@ -28,7 +28,7 @@ func main() {
 		"repository":  genrepository.Run,
 		"service":     genservice.Run,
 		"gateway":     gengateway.Run,
-		"controller":  gencontroller.Run,
+		"controller":  gencontroller2.Run,
 		"error":       generror.Run,
 		"test":        gentest.Run,
 		"application": genapplication.Run,

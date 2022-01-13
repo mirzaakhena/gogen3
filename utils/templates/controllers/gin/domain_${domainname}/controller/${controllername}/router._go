@@ -5,14 +5,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"{{.PackagePath}}/shared/infrastructure/logger"
+	"{{.PackagePath}}/shared/infrastructure/logger" {{range .UsecaseNames}}
+    "{{$.PackagePath}}/domain_{{$.DomainName}}/usecase/{{LowerCase .}}" {{end}}
 )
 
 type Controller struct {
 	Router gin.IRouter
-    Log    logger.Logger
+    Log    logger.Logger {{range .UsecaseNames}}
+    {{PascalCase .}}Inport {{LowerCase .}}.Inport {{end}}
 }
 
 // RegisterRouter registering all the router
-func (r *Controller) RegisterRouter() {
+func (r *Controller) RegisterRouter() { {{range .UsecaseNames}}
+    r.Router.POST("/{{LowerCase .}}", r.authorized(), r.{{CamelCase .}}Handler(r.{{PascalCase .}}Inport)) {{end}}
 }
