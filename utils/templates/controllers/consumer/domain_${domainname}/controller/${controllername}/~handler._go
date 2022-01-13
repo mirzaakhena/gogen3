@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .UsecaseName}}"
-	"paxelmarket/shared/infrastructure/logger"
-	"paxelmarket/shared/infrastructure/messaging"
-	"paxelmarket/shared/infrastructure/util"
-	"paxelmarket/shared/model/event"
-	"paxelmarket/shared/model/payload"
+	"{{.PackagePath}}/shared/infrastructure/logger"
+	"{{.PackagePath}}/shared/infrastructure/util"
+	"{{.PackagePath}}/shared/infrastructure/messaging"
+	"{{.PackagePath}}/shared/model/event"
+	"{{.PackagePath}}/shared/model/payload"
 )
 
 // {{CamelCase .UsecaseName}}Handler ...
