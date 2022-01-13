@@ -251,8 +251,6 @@ func InjectToErrorEnum(fset *token.FileSet, filepath string, errorName, separato
 				break
 			}
 
-			fmt.Printf("masa sih %s == %s : %v\n", strings.ToLower(valueSpec.Names[0].String()), strings.ToLower(errorName), strings.ToLower(valueSpec.Names[0].String()) == strings.ToLower(errorName))
-
 			if len(valueSpec.Names) > 0 && strings.ToLower(valueSpec.Names[0].String()) == strings.ToLower(errorName) {
 				fmt.Printf("error code %s already exist\n", errorName)
 				return
