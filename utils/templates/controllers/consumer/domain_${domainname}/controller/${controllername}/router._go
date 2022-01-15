@@ -3,20 +3,19 @@ package {{LowerCase .ControllerName}}
 import (
 	"github.com/gin-gonic/gin"
 
-	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/consumedata"
 	"{{.PackagePath}}/shared/infrastructure/messaging"
-	"{{.PackagePath}}/shared/model/event"
-	"{{.PackagePath}}/shared/infrastructure/logger"
+	"{{.PackagePath}}/shared/infrastructure/logger" {{range .UsecaseNames}}
+    "{{$.PackagePath}}/domain_{{$.DomainName}}/usecase/{{LowerCase .}}" {{end}}
 )
 
 type Controller struct {
 	Router            gin.IRouter
 	Messaging         messaging.Subscriber
-	Log               logger.Logger
-	{{PascalCase .UsecaseName}}Inport {{LowerCase .UsecaseName}}.Inport
+	Log               logger.Logger {{range .UsecaseNames}}
+    {{PascalCase .}}Inport {{LowerCase .}}.Inport {{end}}
 }
 
 // RegisterRouter registering all the router
-func (r *Controller) RegisterRouter() {
-	r.Messaging.Handle("", r.{{CamelCase .UsecaseName}}Handler(r.{{PascalCase .UsecaseName}}Inport))
+func (r *Controller) RegisterRouter() { {{range .UsecaseNames}}
+	r.Messaging.Handle("EVENT_{{UpperCase .}}", r.{{CamelCase .}}Handler(r.{{PascalCase .}}Inport)) {{end}}
 }

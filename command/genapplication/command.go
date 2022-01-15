@@ -180,7 +180,7 @@ func Run(inputs ...string) error {
 
 	} //---------
 
-	// inject to main.go
+	// inject to main.__go
 	{
 		fset := token.NewFileSet()
 		utils.InjectToMain(fset, applicationName)

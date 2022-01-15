@@ -53,7 +53,7 @@ func Run(inputs ...string) error {
 		return err
 	}
 
-	// inject to main.go
+	// inject to main.__go
 	{
 		fset := token.NewFileSet()
 		utils.InjectToMain(fset, fmt.Sprintf("App%s", entityName))

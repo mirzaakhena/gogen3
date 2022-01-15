@@ -30,6 +30,12 @@ func NewOutportMethodImpl(structName, gatewayRootFolderName string) (map[string]
 // existingFunc map[string]int dibuang dari parameter
 func (obj *gatewayMethod) readStruct(structName, folderPath string) error {
 
+	//fmt.Printf(">>>>> structname: %s, folderpath:%s\n", structName, folderPath)
+
+	if folderPath == "" {
+		return nil
+	}
+
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, folderPath, nil, parser.ParseComments)
 	if err != nil {
@@ -76,7 +82,9 @@ func (obj *gatewayMethod) generalDecl(structName string, gd *ast.GenDecl, folder
 		// handle import
 		is, ok := spec.(*ast.ImportSpec)
 		if ok {
-			handleImports(is, importPaths)
+			handleImports(obj.packagePath, is, importPaths)
+
+			//fmt.Printf(">>>> %v\n", importPaths)
 		}
 
 		// it is type declaration

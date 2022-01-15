@@ -60,7 +60,7 @@ func (obj *OutportMethods) readInterface(interfaceName, folderPath, packagePath 
 
 					is, ok := spec.(*ast.ImportSpec)
 					if ok {
-						handleImports(is, ip)
+						handleImports(packagePath, is, ip)
 					}
 
 					// Outport is must a type spec
@@ -222,7 +222,14 @@ func (obj *OutportMethods) validateFirstParamIsContext(fType *ast.FuncType) bool
 	return true
 }
 
-func handleImports(is *ast.ImportSpec, ip map[string]string) {
+func handleImports(packagePath string, is *ast.ImportSpec, ip map[string]string) {
+
+	//fmt.Printf(">>> %s === %s : %v \n", fmt.Sprintf("\"%s", packagePath), is.Path.Value, strings.HasPrefix(is.Path.Value, fmt.Sprintf("\"%s", packagePath)))
+
+	if !strings.HasPrefix(is.Path.Value, fmt.Sprintf("\"%s", packagePath)) {
+		return
+	}
+
 	v := strings.Trim(is.Path.Value, "\"")
 	if is.Name != nil {
 		ip[is.Name.String()] = v
