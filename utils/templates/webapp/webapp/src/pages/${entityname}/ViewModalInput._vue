@@ -10,12 +10,12 @@
 <script setup>
 import MirzaModal from "../../components/modal/MirzaModal.vue";
 import BasicCrud from "../../modules/basiccrud.js"
-import {state, url} from "./state.js";
+import {state} from "./state.js";
 import {ref} from "vue";
 import to from "await-to-js";
 import Swal from "sweetalert2";
 
-const {loadData, addNewData, updateData, deleteData} = BasicCrud(url)
+const {addNewData} = BasicCrud()
 
 const modalInput = ref()
 

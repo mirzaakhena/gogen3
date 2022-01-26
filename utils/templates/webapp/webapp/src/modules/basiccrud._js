@@ -2,9 +2,11 @@ import {reactive, toRefs} from "vue";
 import to from "await-to-js";
 import axios from "axios";
 
-export default function BasicCrud(url) {
+export default function BasicCrud() {
 
     const loadData = async (params) => {
+
+        const url = `${BASE_URL}/{{LowerCase .EntityName}}`
 
         const requestConfig = { params: { ...params } }
 
@@ -20,6 +22,8 @@ export default function BasicCrud(url) {
 
     const addNewData = async (payload) => {
 
+        const url = `${BASE_URL}/{{LowerCase .EntityName}}`
+
         const [err, res] = await to(axios.post(url, payload).catch((err) => Promise.reject(err)))
 
         if (err) {
@@ -31,6 +35,8 @@ export default function BasicCrud(url) {
 
     const deleteData = async (id) => {
 
+        const url = `${BASE_URL}/{{LowerCase .EntityName}}`
+
         const [err, res] = await to(axios.delete(`${url}/${id}`).catch((err) => Promise.reject(err)))
 
         if (err) {
@@ -41,6 +47,8 @@ export default function BasicCrud(url) {
     }
 
     const updateData = async (id, payload) => {
+
+        const url = `${BASE_URL}/{{LowerCase .EntityName}}`
 
         const [err, res] = await to(axios.put(`${url}/${id}`, payload).catch((err) => Promise.reject(err)))
 

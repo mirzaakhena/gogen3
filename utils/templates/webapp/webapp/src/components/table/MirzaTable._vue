@@ -27,7 +27,7 @@
 
 defineProps({
   fields: {type: Array, required: true},
-  items: {type: Array, required: true}
+  items: {type: Array, required: false}
 })
 
 </script>

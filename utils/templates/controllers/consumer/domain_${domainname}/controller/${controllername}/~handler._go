@@ -14,19 +14,28 @@ import (
 // {{CamelCase .UsecaseName}}Handler ...
 func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .UsecaseName}}.Inport) messaging.HandleFunc {
 
+	type request struct {
+
+	}
+
 	return func(payload payload.Payload, err error) {
 
 		traceID := payload.TraceID
 
 		ctx := logger.SetTraceID(context.Background(), traceID)
 
-		// TODO define data type here
-		var dataPayload struct{}
+		if err != nil {
+			r.Log.Error(ctx, err.Error())
+			return
+		}
+
 		dbByte, err := json.Marshal(payload.Data)
 		if err != nil {
 			r.Log.Error(ctx, err.Error())
 			return
 		}
+
+		var dataPayload request
 		err = json.Unmarshal(dbByte, &dataPayload)
 		if err != nil {
 			r.Log.Error(ctx, err.Error())
