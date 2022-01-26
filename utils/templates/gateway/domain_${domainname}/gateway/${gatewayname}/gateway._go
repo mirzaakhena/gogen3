@@ -2,19 +2,22 @@ package {{LowerCase .GatewayName}}
 
 import (
 	"context"
+	"{{.PackagePath}}/shared/driver"
 
 	"{{.PackagePath}}/domain_{{.DomainName}}/model/entity"
 	"{{.PackagePath}}/shared/infrastructure/logger"
 )
 
 type gateway struct {
-    log logger.Logger
+    log     logger.Logger
+    appData driver.ApplicationData
 }
 
 // NewGateway ...
-func NewGateway(log logger.Logger) (*gateway) {
+func NewGateway(log logger.Logger, appData driver.ApplicationData) (*gateway) {
 	return &gateway{
-	    log: log,
+	    log:     log,
+		appData: appData,
 	}
 }
 

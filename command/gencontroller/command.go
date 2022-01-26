@@ -135,7 +135,7 @@ func Run(inputs ...string) error {
 		//	return err
 		//}
 
-		filename := fmt.Sprintf("domain_%s/controller/%s/handler_%s.go", domainName, controllerName, usecaseName)
+		filename := fmt.Sprintf("domain_%s/controller/%s/handler_%s.go", domainName, utils.LowerCase(controllerName), utils.SpaceCase(usecaseName))
 
 		singleObj := ObjTemplateSingle{
 			PackagePath:    obj.PackagePath,
