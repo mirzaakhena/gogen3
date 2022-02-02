@@ -83,8 +83,6 @@ func Run(inputs ...string) error {
 
 	}
 
-	fmt.Printf("masuk sini <<<<<\n")
-
 	// no usecase name means no need to inject to outport and interactor
 	if obj.UsecaseName == nil {
 		return nil
