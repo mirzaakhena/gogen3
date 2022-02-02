@@ -13,20 +13,19 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Create a new usecase\n" +
-			"   gogen usecase orderservice CreateOrder\n" +
-			"     'orderservice' is a domain name\n" +
+			"   gogen usecase CreateOrder\n" +
 			"     'CreateOrder' is an usecase name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
+	domainName := utils.GetDefaultDomain()
 
-	usecaseName := inputs[1]
+	usecaseName := inputs[0]
 
 	obj := &ObjTemplate{
 		PackagePath: utils.GetPackagePath(),
@@ -35,7 +34,7 @@ func Run(inputs ...string) error {
 
 	fileRenamer := map[string]string{
 		"usecasename": utils.LowerCase(usecaseName),
-		"domainname":  utils.LowerCase(domainName),
+		"domainname":  domainName,
 	}
 
 	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)

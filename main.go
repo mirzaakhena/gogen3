@@ -9,6 +9,7 @@ import (
 	"gogen3/command/genentity"
 	"gogen3/command/generror"
 	"gogen3/command/gengateway"
+	"gogen3/command/geninit"
 	"gogen3/command/genrepository"
 	"gogen3/command/genservice"
 	"gogen3/command/gentest"
@@ -34,6 +35,7 @@ func main() {
 		"application": genapplication.Run,
 		"crud":        gencrud.Run,
 		"webapp":      genwebapp.Run,
+		"init":        geninit.Run,
 	}
 
 	flag.Parse()

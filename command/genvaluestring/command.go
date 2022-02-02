@@ -13,18 +13,17 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Create a valueobject with simple string type\n" +
-			"   gogen genvaluestring orderservice OrderID\n" +
-			"     'orderservice' is a domain name\n" +
-			"     'OrderID'      is an valueobject name\n" +
+			"   gogen genvaluestring OrderID\n" +
+			"     'OrderID' is an valueobject name\n" +
 			"\n")
 		return err
 	}
 
-	domainName := inputs[0]
-	valueStringName := inputs[1]
+	domainName := utils.GetDefaultDomain()
+	valueStringName := inputs[0]
 
 	obj := &ObjTemplate{
 		PackagePath:     utils.GetPackagePath(),

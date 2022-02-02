@@ -14,19 +14,18 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Create an error enum\n" +
-			"   gogen error orderservice SomethingGoesWrongError\n" +
-			"     'orderservice' is a domain name\n" +
+			"   gogen error SomethingGoesWrongError\n" +
 			"     'SomethingGoesWrongError' is an error constant name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
-	errorName := inputs[1]
+	domainName := utils.GetDefaultDomain()
+	errorName := inputs[0]
 
 	obj := ObjTemplate{
 		PackagePath: utils.GetPackagePath(),

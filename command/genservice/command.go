@@ -18,22 +18,20 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("   # Create a service and inject the template code into interactor file with '//!' flag\n" +
-			"   gogen service orderservice PublishMessage CreateOrder\n" +
-			"     'orderservice' is an domain name\n" +
+			"   gogen service PublishMessage CreateOrder\n" +
 			"     'PublishMessage' is a service func name\n" +
 			"     'CreateOrder'    is an usecase name\n" +
 			"\n" +
 			"   # Create a service without inject the template code into usecase\n" +
-			"   gogen service orderservice PublishMessage\n" +
-			"     'orderservice' is an domain name\n" +
+			"   gogen service PublishMessage\n" +
 			"     'PublishMessage' is a service func name\n" +
 			"\n")
 		return err
 	}
-	domainName := inputs[0]
-	serviceName := inputs[1]
+	domainName := utils.GetDefaultDomain()
+	serviceName := inputs[0]
 
 	obj := ObjTemplate{
 		PackagePath: utils.GetPackagePath(),
@@ -41,8 +39,8 @@ func Run(inputs ...string) error {
 		UsecaseName: nil,
 	}
 
-	if len(inputs) >= 3 {
-		obj.UsecaseName = &inputs[2]
+	if len(inputs) >= 2 {
+		obj.UsecaseName = &inputs[1]
 	}
 
 	fileRenamer := map[string]string{
@@ -84,6 +82,8 @@ func Run(inputs ...string) error {
 		}
 
 	}
+
+	fmt.Printf("masuk sini <<<<<\n")
 
 	// no usecase name means no need to inject to outport and interactor
 	if obj.UsecaseName == nil {
@@ -148,7 +148,7 @@ func isServiceExist(servicePath, serviceName string) (bool, error) {
 		_, isInterface := ts.Type.(*ast.InterfaceType)
 		_, isStruct := ts.Type.(*ast.StructType)
 		// TODO we need to handle service as function
-		return (isStruct || isInterface) && ts.Name.String() == serviceName
+		return (isStruct || isInterface) && ts.Name.String() == getServiceName(serviceName)
 	})
 	return exist, nil
 }

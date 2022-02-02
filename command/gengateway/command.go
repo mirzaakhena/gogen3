@@ -17,25 +17,23 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Create a gateway for specific usecase\n" +
-			"   gogen gateway orderservice inmemory CreateOrder\n" +
-			"     'orderservice' is an domain name\n" +
-			"     'inmemory'     is a gateway name\n" +
-			"     'CreateOrder'  is an usecase name\n" +
+			"   gogen gateway inmemory CreateOrder\n" +
+			"     'inmemory'    is a gateway name\n" +
+			"     'CreateOrder' is an usecase name\n" +
 			"\n" +
 			"   # Create a gateway for all usecases\n" +
-			"   gogen gateway orderservice inmemory\n" +
-			"     'orderservice' is an domain name\n" +
-			"     'inmemory'     is a gateway name\n" +
+			"   gogen gateway inmemory\n" +
+			"     'inmemory' is a gateway name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
-	gatewayName := inputs[1]
+	domainName := utils.GetDefaultDomain()
+	gatewayName := inputs[0]
 
 	obj := ObjTemplate{
 		PackagePath: utils.GetPackagePath(),
@@ -44,8 +42,8 @@ func Run(inputs ...string) error {
 		UsecaseName: nil,
 	}
 
-	if len(inputs) >= 3 {
-		obj.UsecaseName = &inputs[2]
+	if len(inputs) >= 2 {
+		obj.UsecaseName = &inputs[1]
 	}
 
 	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)

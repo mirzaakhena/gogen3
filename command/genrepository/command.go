@@ -20,28 +20,26 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 3 {
+	if len(inputs) < 2 {
 		err := fmt.Errorf("\n" +
 			"   # Create a repository and inject the template code into interactor file with '//!' flag\n" +
-			"   gogen repository orderservice SaveOrder Order CreateOrder\n" +
-			"     'orderservice' is an domain name\n" +
-			"     'SaveOrder'    is a repository func name\n" +
-			"     'Order'        is an entity name\n" +
-			"     'CreateOrder'  is an usecase name\n" +
+			"   gogen repository SaveOrder Order CreateOrder\n" +
+			"     'SaveOrder'   is a repository func name\n" +
+			"     'Order'       is an entity name\n" +
+			"     'CreateOrder' is an usecase name\n" +
 			"\n" +
 			"   # Create a repository without inject the template code into usecase\n" +
-			"   gogen repository orderservice SaveOrder Order\n" +
-			"     'orderservice' is an entity name\n" +
-			"     'SaveOrder'    is a repository func name\n" +
-			"     'Order'        is an entity name\n" +
+			"   gogen repository SaveOrder Order\n" +
+			"     'SaveOrder' is a repository func name\n" +
+			"     'Order'     is an entity name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
-	repositoryName := inputs[1]
-	entityName := inputs[2]
+	domainName := utils.GetDefaultDomain()
+	repositoryName := inputs[0]
+	entityName := inputs[1]
 
 	obj := ObjTemplate{
 		PackagePath:    utils.GetPackagePath(),
@@ -50,8 +48,8 @@ func Run(inputs ...string) error {
 		UsecaseName:    nil,
 	}
 
-	if len(inputs) >= 4 {
-		obj.UsecaseName = &inputs[3]
+	if len(inputs) >= 3 {
+		obj.UsecaseName = &inputs[2]
 	}
 
 	fileRenamer := map[string]string{

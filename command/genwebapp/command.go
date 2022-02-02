@@ -13,20 +13,19 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Create a complete CRUD webapp ui for specific entity\n" +
-			"   gogen webapp orderservice Product\n" +
-			"     'orderservice' is a domain name\n" +
+			"   gogen webapp Product\n" +
 			"     'Product' is an existing entity name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
+	domainName := utils.GetDefaultDomain()
 
-	entityName := inputs[1]
+	entityName := inputs[0]
 
 	obj := &ObjTemplate{
 		EntityName: entityName,

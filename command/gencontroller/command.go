@@ -33,42 +33,39 @@ type ObjTemplateSingle struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 
 		err := fmt.Errorf("\n" +
 			"   # Create a controller with defined web framework and specific usecase\n" +
-			"   gogen controller orderservice restapi gin CreateOrder\n" +
-			"     'orderservice' is an domain name\n" +
+			"   gogen controller restapi gin CreateOrder\n" +
 			"     'restapi'      is a gateway name\n" +
 			"     'gin'          is a sample webframewrok. You may try the other one like: nethttp, echo, and gorilla\n" +
 			"     'CreateOrder'  is an usecase name\n" +
 			"\n" +
 			"   # Create a controller with with defined web framework for all usecases\n" +
-			"   gogen controller orderservice restapi gin\n" +
-			"     'orderservice' is an domain name\n" +
-			"     'restapi'      is a gateway name\n" +
-			"     'CreateOrder'  is an usecase name\n" +
+			"   gogen controller restapi gin\n" +
+			"     'restapi'     is a gateway name\n" +
+			"     'CreateOrder' is an usecase name\n" +
 			"\n" +
 			"   # Create a controller with gin as default web frameworkfor all usecases\n" +
-			"   gogen controller orderservice restapi\n" +
-			"     'orderservice' is an domain name\n" +
-			"     'restapi'      is a gateway name\n" +
+			"   gogen controller restapi\n" +
+			"     'restapi' is a gateway name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
-	controllerName := inputs[1]
+	domainName := utils.GetDefaultDomain()
+	controllerName := inputs[0]
 
 	driverName := "gin"
-	if len(inputs) >= 3 {
-		driverName = utils.LowerCase(inputs[2])
+	if len(inputs) >= 2 {
+		driverName = utils.LowerCase(inputs[1])
 	}
 
 	usecaseNames := make([]string, 0)
-	if len(inputs) >= 4 {
-		usecaseNames = append(usecaseNames, inputs[3])
+	if len(inputs) >= 3 {
+		usecaseNames = append(usecaseNames, inputs[2])
 
 	} else {
 

@@ -16,21 +16,20 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 3 {
+	if len(inputs) < 2 {
 		err := fmt.Errorf("\n" +
 			"   # Create a test case file for current usecase\n" +
-			"   gogen test orderservice normal CreateOrder\n" +
-			"     'orderservice' is a domain name\n" +
-			"     'normal'       is a test case name\n" +
-			"     'CreateOrder'  is an usecase name\n" +
+			"   gogen test normal CreateOrder\n" +
+			"     'normal'      is a test case name\n" +
+			"     'CreateOrder' is an usecase name\n" +
 			"\n")
 
 		return err
 	}
 
-	domainName := inputs[0]
-	testName := inputs[1]
-	usecaseName := inputs[2]
+	domainName := utils.GetDefaultDomain()
+	testName := inputs[0]
+	usecaseName := inputs[1]
 
 	obj := ObjTemplate{
 		PackagePath: utils.GetPackagePath(),

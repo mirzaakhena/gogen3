@@ -22,22 +22,19 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 2 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Create a application for all controller\n" +
-			"   gogen application orderservice appone\n" +
-			"     'orderservice' is an domain name\n" +
+			"   gogen application appone\n" +
 			"     'appone'       is an application name\n" +
 			"\n" +
 			"   # Create a application for specific controller\n" +
-			"   gogen application orderservice appone restapi\n" +
-			"     'orderservice' is an domain name\n" +
+			"   gogen application appone restapi\n" +
 			"     'appone'       is an application name\n" +
 			"     'restapi'      is a controller name\n" +
 			"\n" +
 			"   # Create a application for specific controller and gateway\n" +
-			"   gogen application orderservice appone restapi prod\n" +
-			"     'orderservice' is an domain name\n" +
+			"   gogen application appone restapi prod\n" +
 			"     'appone'       is an application name\n" +
 			"     'restapi'      is a controller name\n" +
 			"     'prod'         is a gateway name\n" +
@@ -46,8 +43,8 @@ func Run(inputs ...string) error {
 		return err
 	}
 
-	domainName := inputs[0]
-	applicationName := inputs[1]
+	domainName := utils.GetDefaultDomain()
+	applicationName := inputs[0]
 
 	obj := &ObjTemplate{
 		PackagePath:     utils.GetPackagePath(),
@@ -57,12 +54,12 @@ func Run(inputs ...string) error {
 		GatewayName:     nil,
 	}
 
-	if len(inputs) >= 3 {
-		obj.ControllerName = &inputs[2]
+	if len(inputs) >= 2 {
+		obj.ControllerName = &inputs[1]
 	}
 
-	if len(inputs) >= 4 {
-		obj.GatewayName = &inputs[3]
+	if len(inputs) >= 3 {
+		obj.GatewayName = &inputs[2]
 	}
 
 	var objController, objGateway string

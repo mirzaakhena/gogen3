@@ -13,6 +13,48 @@ func GetPackageName(rootFolderName string) string {
 	return rootFolderName[i+1:]
 }
 
+func GetDefaultDomain() string {
+
+	var defaultDomain string
+
+	file, err := os.Open("./.gogen/domain")
+	if err != nil {
+		fmt.Printf(".gogen/domain is not found. Please run 'gogen init' first\n")
+		os.Exit(1)
+	}
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			return
+		}
+	}()
+
+	scanner := bufio.NewScanner(file)
+	defer func() {
+		if err := scanner.Err(); err != nil {
+			panic(err.Error())
+		}
+	}()
+	found := false
+	for scanner.Scan() {
+		row := scanner.Text()
+		if strings.HasPrefix(row, "-") {
+			i := strings.Index(row, "-")
+			defaultDomain = strings.TrimSpace(row[i+1:])
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		fmt.Printf("please select one of domain by put '-' in front of domain name\n")
+		os.Exit(1)
+	}
+
+	return strings.ToLower(defaultDomain)
+
+}
+
 func GetPackagePath() string {
 
 	var gomodPath string
