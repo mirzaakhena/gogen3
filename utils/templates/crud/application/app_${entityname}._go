@@ -9,6 +9,7 @@ import (
     "{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readone"
     "{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}update"
     "{{.PackagePath}}/shared/driver"
+    "{{.PackagePath}}/shared/infrastructure/config"
     "{{.PackagePath}}/shared/infrastructure/server"
     "{{.PackagePath}}/shared/infrastructure/logger"
     "{{.PackagePath}}/shared/infrastructure/util"
@@ -22,15 +23,17 @@ type app{{PascalCase .EntityName}} struct {
 func NewApp{{PascalCase .EntityName}}() func() driver.RegistryContract {
 	return func() driver.RegistryContract {
 
+        cfg := config.ReadConfig()
+
 		appID := util.GenerateID(4)
 
 		appData := driver.NewApplicationData("{{LowerCase .EntityName}}", appID)
 
 		log := logger.NewSimpleJSONLogger(appData)
 
-        httpHandler := server.NewGinHTTPHandlerDefault(log, appData)
+        httpHandler := server.NewGinHTTPHandlerDefault(log, appData, cfg)
 
-		datasource := {{LowerCase .EntityName}}gateway.NewGateway(log)
+		datasource := {{LowerCase .EntityName}}gateway.NewGateway(log, cfg)
 
 		return &app{{PascalCase .EntityName}}{
 			GinHTTPHandler: &httpHandler,

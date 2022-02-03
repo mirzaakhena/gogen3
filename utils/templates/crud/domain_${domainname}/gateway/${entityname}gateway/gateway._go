@@ -16,10 +16,11 @@ type gateway struct {
 	*database.GormWithTransactionImpl
 	*database.GormWithoutTransactionImpl
 	log logger.Logger
+	cfg  *config.Config
 }
 
 // NewGateway ...
-func NewGateway(log logger.Logger) *gateway {
+func NewGateway(log logger.Logger, cfg *config.Config) *gateway {
 
 	db := database.NewSQLiteDefault()
 
@@ -32,6 +33,7 @@ func NewGateway(log logger.Logger) *gateway {
 		GormWithoutTransactionImpl: database.NewGormWithoutTransactionImpl(db),
 		GormWithTransactionImpl: database.NewGormWithTransactionImpl(db),
 		log: log,
+		cfg: cfg,
 	}
 }
 

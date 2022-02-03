@@ -6,6 +6,7 @@ import (
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readall"
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}readone"
 	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .EntityName}}update"
+    "{{.PackagePath}}/shared/infrastructure/config"
     "{{.PackagePath}}/shared/infrastructure/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,7 @@ import (
 type Controller struct {
 	Router gin.IRouter
 	Log logger.Logger
+	Config *config.Config
 	{{PascalCase .EntityName}}CreateInport  {{LowerCase .EntityName}}create.Inport
 	{{PascalCase .EntityName}}DeleteInport  {{LowerCase .EntityName}}delete.Inport
 	{{PascalCase .EntityName}}ReadAllInport {{LowerCase .EntityName}}readall.Inport
