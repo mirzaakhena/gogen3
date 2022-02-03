@@ -7,12 +7,13 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+    "{{.PackagePath}}/shared/infrastructure/config"
 	"{{.PackagePath}}/shared/infrastructure/logger"
 	"{{.PackagePath}}/shared/driver"
 )
 
-func NewGinHTTPHandlerDefault(log logger.Logger, appData driver.ApplicationData) GinHTTPHandler {
-	return NewGinHTTPHandler(log, ":8080", appData)
+func NewGinHTTPHandlerDefault(log logger.Logger, appData driver.ApplicationData, cfg *config.Config) GinHTTPHandler {
+	return NewGinHTTPHandler(log, fmt.Sprintf(":%d", cfg.Server.Port), appData)
 }
 
 // GinHTTPHandler will define basic HTTP configuration with gracefully shutdown
