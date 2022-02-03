@@ -56,7 +56,7 @@ func Run(inputs ...string) error {
 		"domainname": utils.LowerCase(domainName),
 	}
 
-	err := genentity.Run(domainName, entityName)
+	err := genentity.Run(entityName)
 	if err != nil {
 		return err
 	}

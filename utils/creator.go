@@ -91,6 +91,14 @@ func (x Haha) CreateEverythingExactly(pathUnder string, fileRenamer map[string]s
 			return err
 		}
 
+		if strings.HasSuffix(nameFileWithoutUnderscore, ".go") {
+			// reformat router.go
+			err = Reformat(nameFileWithoutUnderscore, nil)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	//fmt.Printf("%v\n", ff)

@@ -4,3 +4,5 @@ if err != nil {
 }
 
 _ = {{CamelCase .ServiceName}}Response
+
+//!

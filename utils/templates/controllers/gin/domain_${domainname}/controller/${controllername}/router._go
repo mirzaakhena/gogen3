@@ -5,12 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+    "{{.PackagePath}}/shared/infrastructure/config"
 	"{{.PackagePath}}/shared/infrastructure/logger" {{range .UsecaseNames}}
     "{{$.PackagePath}}/domain_{{$.DomainName}}/usecase/{{LowerCase .}}" {{end}}
 )
 
 type Controller struct {
 	Router gin.IRouter
+	Config *config.Config
     Log    logger.Logger {{range .UsecaseNames}}
     {{PascalCase .}}Inport {{LowerCase .}}.Inport {{end}}
 }

@@ -6,3 +6,5 @@ if err != nil {
 if {{CamelCase .EntityName}}Obj == nil {
     return nil, fmt.Errorf("object not found")
 }
+
+//!

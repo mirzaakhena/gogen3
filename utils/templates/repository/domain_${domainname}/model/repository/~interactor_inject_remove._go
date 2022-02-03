@@ -3,3 +3,5 @@ err := r.outport.{{PascalCase .RepositoryName}}(ctx, "{{CamelCase .EntityName}}I
 if err != nil {
     return nil, err
 }
+
+//!

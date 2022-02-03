@@ -7,3 +7,5 @@ if err != nil {
 for _, obj := range {{CamelCase .EntityName}}Objs {
     fmt.Printf("%v\n", obj)
 }
+
+//!

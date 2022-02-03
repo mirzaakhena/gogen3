@@ -36,20 +36,20 @@ func Run(inputs ...string) error {
 	if len(inputs) < 1 {
 
 		err := fmt.Errorf("\n" +
-			"   # Create a controller with defined web framework and specific usecase\n" +
-			"   gogen controller restapi gin CreateOrder\n" +
-			"     'restapi'      is a gateway name\n" +
-			"     'gin'          is a sample webframewrok. You may try the other one like: nethttp, echo, and gorilla\n" +
-			"     'CreateOrder'  is an usecase name\n" +
+			"   # Create a controller with gin as default web frameworkfor all usecases\n" +
+			"   gogen controller restapi\n" +
+			"     'restapi' is a gateway name\n" +
 			"\n" +
 			"   # Create a controller with with defined web framework for all usecases\n" +
 			"   gogen controller restapi gin\n" +
 			"     'restapi'     is a gateway name\n" +
 			"     'CreateOrder' is an usecase name\n" +
 			"\n" +
-			"   # Create a controller with gin as default web frameworkfor all usecases\n" +
-			"   gogen controller restapi\n" +
-			"     'restapi' is a gateway name\n" +
+			"   # Create a controller with defined web framework and specific usecase\n" +
+			"   gogen controller restapi gin CreateOrder\n" +
+			"     'restapi'      is a gateway name\n" +
+			"     'gin'          is a sample webframewrok. You may try the other one like: nethttp, echo, and gorilla\n" +
+			"     'CreateOrder'  is an usecase name\n" +
 			"\n")
 
 		return err
@@ -132,7 +132,7 @@ func Run(inputs ...string) error {
 		//	return err
 		//}
 
-		filename := fmt.Sprintf("domain_%s/controller/%s/handler_%s.go", domainName, utils.LowerCase(controllerName), utils.SpaceCase(usecaseName))
+		filename := fmt.Sprintf("domain_%s/controller/%s/handler_%s.go", domainName, utils.LowerCase(controllerName), utils.LowerCase(usecaseName))
 
 		singleObj := ObjTemplateSingle{
 			PackagePath:    obj.PackagePath,

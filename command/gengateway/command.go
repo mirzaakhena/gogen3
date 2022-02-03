@@ -19,14 +19,14 @@ func Run(inputs ...string) error {
 
 	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
+			"   # Create a gateway for all usecases\n" +
+			"   gogen gateway inmemory\n" +
+			"     'inmemory' is a gateway name\n" +
+			"\n" +
 			"   # Create a gateway for specific usecase\n" +
 			"   gogen gateway inmemory CreateOrder\n" +
 			"     'inmemory'    is a gateway name\n" +
 			"     'CreateOrder' is an usecase name\n" +
-			"\n" +
-			"   # Create a gateway for all usecases\n" +
-			"   gogen gateway inmemory\n" +
-			"     'inmemory' is a gateway name\n" +
 			"\n")
 
 		return err
