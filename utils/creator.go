@@ -92,11 +92,18 @@ func (x Haha) CreateEverythingExactly(pathUnder string, fileRenamer map[string]s
 		}
 
 		if strings.HasSuffix(nameFileWithoutUnderscore, ".go") {
-			// reformat router.go
+
+			// temporary handling need to fixed later
+			if strings.HasPrefix(nameFileWithExtOnly, "main") {
+				continue
+			}
+
+			// reformat the file
 			err = Reformat(nameFileWithoutUnderscore, nil)
 			if err != nil {
 				return err
 			}
+
 		}
 
 	}
