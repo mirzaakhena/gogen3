@@ -1,8 +1,11 @@
 package geninit
 
 import (
+	"bufio"
 	"fmt"
 	"gogen3/utils"
+	"os"
+	"strings"
 )
 
 // ObjTemplate ...
@@ -48,16 +51,44 @@ func Run(inputs ...string) error {
 	}
 
 	gitignoreContent := `
-./idea
-*.DS_Store
+.idea/
+.DS_Store
 config.json
+*.app
+*.exe
+*.log
+*.db
 */node_modules/
 	`
-
 	_, err = utils.WriteFileIfNotExist(gitignoreContent, "./.gitignore", struct{}{})
 	if err != nil {
 		return err
 	}
+
+	inFile, err := os.Open(".gogen/domain")
+	if err != nil {
+		return err
+	}
+	defer inFile.Close()
+
+	scanner := bufio.NewScanner(inFile)
+	for scanner.Scan() {
+		domainName := strings.TrimSpace(scanner.Text())
+		if domainName == "" {
+			continue
+		}
+		if strings.HasPrefix(domainName, "-") {
+			domainName = strings.ReplaceAll(domainName, "-", "")
+		}
+		domainName = strings.ToLower(domainName)
+		_, err := utils.CreateFolderIfNotExist(fmt.Sprintf("domain_%s", domainName))
+		if err != nil {
+			return err
+		}
+
+	}
+
+	fmt.Printf("open .gogen/domain file and add all your domains name. Then run 'gogen init' again to create domain folders\n")
 
 	return nil
 
