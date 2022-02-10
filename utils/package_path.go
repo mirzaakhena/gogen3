@@ -39,15 +39,20 @@ func GetDefaultDomain() string {
 	for scanner.Scan() {
 		row := scanner.Text()
 		if strings.HasPrefix(row, "-") {
+
+			if found {
+				fmt.Printf("Found multiple selected domain. Put just one '-' in front of domain name. \n")
+				os.Exit(1)
+			}
+
 			i := strings.Index(row, "-")
 			defaultDomain = strings.TrimSpace(row[i+1:])
 			found = true
-			break
 		}
 	}
 
 	if !found {
-		fmt.Printf("please select one of domain by put '-' in front of domain name\n")
+		fmt.Printf("No domain selected. Please select one of domain by put '-' in front of domain name\n")
 		os.Exit(1)
 	}
 
