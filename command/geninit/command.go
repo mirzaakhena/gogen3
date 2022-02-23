@@ -88,8 +88,6 @@ config.json
 
 	}
 
-	fmt.Printf("open .gogen/domain file and add all your domains name. Then run 'gogen init' again to create domain folders\n")
-
 	return nil
 
 }
