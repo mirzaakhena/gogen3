@@ -18,3 +18,7 @@ type InportRequest struct {
 // InportResponse is response payload after running the usecase
 type InportResponse struct {
 }
+
+func (r InportRequest) Validate() error {
+	return nil
+}
