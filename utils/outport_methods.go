@@ -134,7 +134,7 @@ func (obj *OutportMethods) handleMethodSignature(prefixExpression string, fType 
 	defParVal := obj.composeDefaultValue(fType.Params.List)
 	defRetVal := obj.composeDefaultValue(fType.Results.List)
 
-	methodSignature := FuncHandler{PrefixExpression: prefixExpression}.processFuncType(&bytes.Buffer{}, fType)
+	methodSignature := TypeHandler{PrefixExpression: prefixExpression}.processFuncType(&bytes.Buffer{}, fType)
 	msObj := method{
 		MethodName:       methodName,
 		MethodSignature:  methodSignature,

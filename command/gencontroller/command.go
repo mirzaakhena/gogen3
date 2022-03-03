@@ -257,7 +257,7 @@ func injectUsecaseInportFields(usecaseFolderName string, usecaseName string) []*
 			if utils.LowerCase(ts.Name.String()) == "inportrequest" {
 
 				for _, f := range structObj.Fields.List {
-					fieldType := utils.FuncHandler{PrefixExpression: "abc"}.Mulai(f.Type)
+					fieldType := utils.TypeHandler{PrefixExpression: utils.LowerCase(usecaseName)}.Mulai(f.Type)
 					for _, name := range f.Names {
 						inportRequestFields = append(inportRequestFields, &InportRequestField{
 							Name: name.String(),
