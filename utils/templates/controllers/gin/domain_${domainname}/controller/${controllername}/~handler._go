@@ -6,16 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .UsecaseName}}"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .Usecase.Name}}"
 	"{{.PackagePath}}/shared/infrastructure/logger"
 	"{{.PackagePath}}/shared/infrastructure/util"
 	"{{.PackagePath}}/shared/model/payload"
 )
 
-// {{CamelCase .UsecaseName}}Handler ...
-func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .UsecaseName}}.Inport) gin.HandlerFunc {
+// {{CamelCase .Usecase.Name}}Handler ...
+func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .Usecase.Name}}.Inport) gin.HandlerFunc {
 
-	type request struct {
+	type request struct {  {{range .Usecase.InportRequestFields}}
+        {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}}
 	}
 
 	type response struct {
@@ -34,8 +35,8 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 			return
 		}
 
-		var req {{LowerCase .UsecaseName}}.InportRequest
-		// TODO assign value from jsonReq object to InportRequest req
+		var req {{LowerCase .Usecase.Name}}.InportRequest {{range .Usecase.InportRequestFields}}
+        req.{{.Name}} = jsonReq.{{.Name}} {{end}}
 
 		r.Log.Info(ctx, util.MustJSON(req))
 

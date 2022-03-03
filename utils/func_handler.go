@@ -11,6 +11,10 @@ type FuncHandler struct {
 	PrefixExpression string //
 }
 
+func (r FuncHandler) Mulai(expr ast.Expr) string {
+	return r.appendType(expr)
+}
+
 func (r FuncHandler) appendType(expr ast.Expr) string {
 	var param bytes.Buffer
 

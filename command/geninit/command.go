@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"gogen3/utils"
+	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -16,17 +17,20 @@ type ObjTemplate struct {
 
 func Run(inputs ...string) error {
 
-	if len(inputs) < 0 {
+	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
 			"   # Initiate gogen project with default input. You may change later under .gogen folder\n" +
-			"   gogen init \n" +
+			"   gogen init mydomain\n" +
+			"     'mydomain' is a your domain name\n" +
 			"\n")
 
 		return err
 	}
 
+	domainName := inputs[0]
+
 	gomodPath := "your/path/project"
-	defaultDomain := "-yourdefaultdomain"
+	defaultDomain := fmt.Sprintf("-%s", utils.LowerCase(domainName))
 
 	obj := &ObjTemplate{
 		GomodPath:     gomodPath,
@@ -45,9 +49,14 @@ func Run(inputs ...string) error {
 		return err
 	}
 
-	_, err = utils.WriteFileIfNotExist(defaultDomain, "./.gogen/domain", struct{}{})
+	gogenDomainFile := "./.gogen/domain"
+	exist, err := utils.WriteFileIfNotExist(defaultDomain, gogenDomainFile, struct{}{})
 	if err != nil {
 		return err
+	}
+
+	if exist {
+		_ = insertNewDomainName(gogenDomainFile, domainName)
 	}
 
 	gitignoreContent := `
@@ -90,4 +99,53 @@ config.json
 
 	return nil
 
+}
+
+func insertNewDomainName(filePath, domainName string) error {
+
+	f, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	isEmptyFile := true
+
+	fileContent := ""
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+
+		line := strings.TrimSpace(scanner.Text())
+
+		if line == "" {
+			continue
+		}
+
+		isEmptyFile = false
+
+		x := line
+		if strings.HasPrefix(line, "-") {
+			x = line[1:]
+		}
+
+		if x == domainName {
+			return fmt.Errorf("domain name already exist")
+		}
+
+		fileContent += line
+		fileContent += "\n"
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	if isEmptyFile {
+		fileContent += fmt.Sprintf("-%s", domainName)
+	} else {
+		fileContent += domainName
+	}
+
+	fileContent += "\n"
+
+	return ioutil.WriteFile(filePath, []byte(fileContent), 0644)
 }

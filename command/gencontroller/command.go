@@ -18,8 +18,8 @@ type ObjTemplate struct {
 	PackagePath    string
 	DomainName     string
 	ControllerName string
-	UsecaseNames   []string
 	DriverName     string
+	Usecases       []*Usecase
 }
 
 // ObjTemplateSingle ...
@@ -27,8 +27,18 @@ type ObjTemplateSingle struct {
 	PackagePath    string
 	DomainName     string
 	ControllerName string
-	UsecaseName    string
 	DriverName     string
+	Usecase        *Usecase
+}
+
+type Usecase struct {
+	Name                string
+	InportRequestFields []*InportRequestField
+}
+
+type InportRequestField struct {
+	Name string
+	Type string
 }
 
 func Run(inputs ...string) error {
@@ -63,34 +73,30 @@ func Run(inputs ...string) error {
 		driverName = utils.LowerCase(inputs[1])
 	}
 
+	usecaseFolderName := fmt.Sprintf("domain_%s/usecase", domainName)
+
 	usecaseNames := make([]string, 0)
+
+	var usecases []*Usecase
+
 	if len(inputs) >= 3 {
 		usecaseNames = append(usecaseNames, inputs[2])
 
+		usecaseName := utils.LowerCase(inputs[2])
+
+		usecases = injectUsecaseInportFields(usecaseFolderName, usecaseName)
+
 	} else {
 
-		var folders []string
-		usecaseFolderName := fmt.Sprintf("domain_%s/usecase", domainName)
 		fileInfo, err := ioutil.ReadDir(usecaseFolderName)
 		if err != nil {
 			return err
 		}
 
 		for _, file := range fileInfo {
-			folders = append(folders, file.Name())
-			fset := token.NewFileSet()
-			utils.IsExist(fset, fmt.Sprintf("%s/%s", usecaseFolderName, file.Name()), func(file *ast.File, ts *ast.TypeSpec) bool {
 
-				_, isStruct := ts.Type.(*ast.StructType)
-				if isStruct && utils.LowerCase(ts.Name.String()) == fmt.Sprintf("%sinteractor", file.Name) {
-					usecaseNameWithInteractor := ts.Name.String()
-					usecaseNameOnly := usecaseNameWithInteractor[:strings.LastIndex(usecaseNameWithInteractor, "Interactor")]
-					usecaseNames = append(usecaseNames, usecaseNameOnly)
-					return true
-				}
+			usecases = injectUsecaseInportFields(usecaseFolderName, file.Name())
 
-				return false
-			})
 		}
 
 	}
@@ -102,7 +108,7 @@ func Run(inputs ...string) error {
 		DomainName:     domainName,
 		ControllerName: controllerName,
 		DriverName:     driverName,
-		UsecaseNames:   usecaseNames,
+		Usecases:       usecases,
 	}
 
 	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
@@ -121,7 +127,7 @@ func Run(inputs ...string) error {
 	}
 
 	// handler_<usecase>.go
-	for _, usecaseName := range obj.UsecaseNames {
+	for _, usecase := range obj.Usecases {
 		templateCode, err := getHandlerTemplate(obj.DriverName)
 		if err != nil {
 			return err
@@ -132,14 +138,14 @@ func Run(inputs ...string) error {
 		//	return err
 		//}
 
-		filename := fmt.Sprintf("domain_%s/controller/%s/handler_%s.go", domainName, utils.LowerCase(controllerName), utils.LowerCase(usecaseName))
+		filename := fmt.Sprintf("domain_%s/controller/%s/handler_%s.go", domainName, utils.LowerCase(controllerName), utils.LowerCase(usecase.Name))
 
 		singleObj := ObjTemplateSingle{
 			PackagePath:    obj.PackagePath,
 			DomainName:     domainName,
 			ControllerName: controllerName,
-			UsecaseName:    usecaseName,
 			DriverName:     driverName,
+			Usecase:        usecase,
 		}
 
 		_, err = utils.WriteFileIfNotExist(string(templateCode), filename, singleObj)
@@ -155,7 +161,7 @@ func Run(inputs ...string) error {
 
 	}
 
-	unexistedUsecases, err := getUnexistedUsecase(packagePath, domainName, controllerName, obj.UsecaseNames)
+	unexistedUsecases, err := getUnexistedUsecase(packagePath, domainName, controllerName, obj.Usecases)
 	if err != nil {
 		return err
 	}
@@ -168,13 +174,13 @@ func Run(inputs ...string) error {
 		}
 	}
 
-	for _, usecaseName := range unexistedUsecases {
+	for _, usecase := range unexistedUsecases {
 
 		singleObj := ObjTemplateSingle{
 			PackagePath:    obj.PackagePath,
 			DomainName:     domainName,
 			ControllerName: controllerName,
-			UsecaseName:    usecaseName,
+			Usecase:        usecase,
 			DriverName:     driverName,
 		}
 
@@ -236,9 +242,53 @@ func Run(inputs ...string) error {
 
 }
 
-func getUnexistedUsecase(packagePath, domainName, controllerName string, currentUsecases []string) ([]string, error) {
+func injectUsecaseInportFields(usecaseFolderName string, usecaseName string) []*Usecase {
 
-	unexistUsecase := make([]string, 0)
+	usecases := make([]*Usecase, 0)
+
+	inportRequestFields := make([]*InportRequestField, 0)
+	fset := token.NewFileSet()
+	utils.IsExist(fset, fmt.Sprintf("%s/%s", usecaseFolderName, usecaseName), func(file *ast.File, ts *ast.TypeSpec) bool {
+
+		structObj, isStruct := ts.Type.(*ast.StructType)
+
+		if isStruct {
+
+			if utils.LowerCase(ts.Name.String()) == "inportrequest" {
+
+				for _, f := range structObj.Fields.List {
+					fieldType := utils.FuncHandler{PrefixExpression: "abc"}.Mulai(f.Type)
+					for _, name := range f.Names {
+						inportRequestFields = append(inportRequestFields, &InportRequestField{
+							Name: name.String(),
+							Type: fieldType,
+						})
+					}
+				}
+			}
+
+			if utils.LowerCase(ts.Name.String()) == fmt.Sprintf("%sinteractor", file.Name) {
+				usecaseNameWithInteractor := ts.Name.String()
+				usecaseNameOnly := usecaseNameWithInteractor[:strings.LastIndex(usecaseNameWithInteractor, "Interactor")]
+				//usecaseNames = append(usecaseNames, usecaseNameOnly)
+
+				usecases = append(usecases, &Usecase{
+					Name:                usecaseNameOnly,
+					InportRequestFields: inportRequestFields,
+				})
+
+			}
+		}
+
+		return false
+	})
+
+	return usecases
+}
+
+func getUnexistedUsecase(packagePath, domainName, controllerName string, currentUsecases []*Usecase) ([]*Usecase, error) {
+
+	unexistUsecase := make([]*Usecase, 0)
 
 	routerFile := fmt.Sprintf("domain_%s/controller/%s/router.go", domainName, controllerName)
 
@@ -276,7 +326,7 @@ func getUnexistedUsecase(packagePath, domainName, controllerName string, current
 	}
 
 	for _, usecase := range currentUsecases {
-		_, exist := mapUsecase[utils.LowerCase(usecase)]
+		_, exist := mapUsecase[utils.LowerCase(usecase.Name)]
 		if exist {
 			continue
 		}
