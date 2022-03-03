@@ -15,8 +15,8 @@ import (
 // {{CamelCase .Usecase.Name}}Handler ...
 func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .Usecase.Name}}.Inport) gin.HandlerFunc {
 
-	type request struct {  {{range .Usecase.InportRequestFields}}
-        {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}}
+	type request struct {  {{range .Usecase.InportRequestFields}} {{if ne .Name "Now"}}
+        {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}} {{end}}
 	}
 
 	type response struct {
@@ -35,8 +35,9 @@ func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .U
 			return
 		}
 
-		var req {{LowerCase .Usecase.Name}}.InportRequest {{range .Usecase.InportRequestFields}}
-        req.{{.Name}} = jsonReq.{{.Name}} {{end}}
+		var req {{LowerCase .Usecase.Name}}.InportRequest {{range .Usecase.InportRequestFields}}{{if eq .Name "Now"}}
+		req.Now = time.Now(){{ else }}
+		req.{{.Name}} = jsonReq.{{.Name}}{{ end }}{{ end }}
 
 		r.Log.Info(ctx, util.MustJSON(req))
 
