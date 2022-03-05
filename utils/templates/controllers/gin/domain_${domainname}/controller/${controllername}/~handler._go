@@ -16,7 +16,7 @@ import (
 func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .Usecase.Name}}.Inport) gin.HandlerFunc {
 
 	type request struct {  {{range .Usecase.InportRequestFields}} {{if ne .Name "Now"}}
-        {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}} {{end}}
+        {{.Name}} {{.Type}} {{if StartWith (LowerCase $.Usecase.Name) "get"}} `form:"{{SnakeCase .Name}},omitempty,default=0"` {{else}} `json:"{{SnakeCase .Name}}"` {{end}} {{end}} {{end}}
 	}
 
 	type response struct { {{range .Usecase.InportResponseFields}}
@@ -30,7 +30,7 @@ func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .U
 		ctx := logger.SetTraceID(context.Background(), traceID)
 
 		var jsonReq request
-		if err := c.BindJSON(&jsonReq); err != nil {
+		if err := c.Bind(&jsonReq); err != nil {
 			r.Log.Error(ctx, err.Error())
 			c.JSON(http.StatusBadRequest, payload.NewErrorResponse(err, traceID))
 			return

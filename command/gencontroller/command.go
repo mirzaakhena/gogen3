@@ -531,8 +531,6 @@ func getRouterInportTemplate(driverName string) ([]byte, error) {
 }
 
 func getRouterRegisterTemplate(driverName, usecase string) ([]byte, error) {
-
-	fmt.Printf(">>>> %v\n", usecase)
 	if strings.HasPrefix(strings.ToLower(usecase), "get") {
 		path := fmt.Sprintf("templates/controllers/%s/domain_${domainname}/controller/${controllername}/~inject-router-register-get._go", driverName)
 		return utils.AppTemplates.ReadFile(path)
