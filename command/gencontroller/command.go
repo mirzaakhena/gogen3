@@ -32,11 +32,12 @@ type ObjTemplateSingle struct {
 }
 
 type Usecase struct {
-	Name                string
-	InportRequestFields []*InportRequestField
+	Name                 string
+	InportRequestFields  []*StructField
+	InportResponseFields []*StructField
 }
 
-type InportRequestField struct {
+type StructField struct {
 	Name string
 	Type string
 }
@@ -77,14 +78,14 @@ func Run(inputs ...string) error {
 
 	usecaseNames := make([]string, 0)
 
-	var usecases []*Usecase
+	usecases := make([]*Usecase, 0)
 
 	if len(inputs) >= 3 {
 		usecaseNames = append(usecaseNames, inputs[2])
 
 		usecaseName := utils.LowerCase(inputs[2])
 
-		usecases = injectUsecaseInportFields(usecaseFolderName, usecaseName)
+		injectUsecaseInportFields(usecaseFolderName, usecaseName, usecases)
 
 	} else {
 
@@ -95,7 +96,7 @@ func Run(inputs ...string) error {
 
 		for _, file := range fileInfo {
 
-			usecases = injectUsecaseInportFields(usecaseFolderName, file.Name())
+			usecases = injectUsecaseInportFields(usecaseFolderName, file.Name(), usecases)
 
 		}
 
@@ -217,7 +218,7 @@ func Run(inputs ...string) error {
 		//  r.Router.POST("/createorder", r.authorized(), r.createOrderHandler(r.CreateOrderInport)) <-- here
 		//}
 		{
-			templateCode, err := getRouterRegisterTemplate(obj.DriverName)
+			templateCode, err := getRouterRegisterTemplate(obj.DriverName, usecase.Name)
 
 			templateWithData, err := utils.PrintTemplate(string(templateCode), singleObj)
 			if err != nil {
@@ -242,11 +243,12 @@ func Run(inputs ...string) error {
 
 }
 
-func injectUsecaseInportFields(usecaseFolderName string, usecaseName string) []*Usecase {
+func injectUsecaseInportFields(usecaseFolderName string, usecaseName string, usecases []*Usecase) []*Usecase {
 
-	usecases := make([]*Usecase, 0)
+	//usecases := make([]*Usecase, 0)
 
-	inportRequestFields := make([]*InportRequestField, 0)
+	inportRequestFields := make([]*StructField, 0)
+	inportResponseFields := make([]*StructField, 0)
 	fset := token.NewFileSet()
 	utils.IsExist(fset, fmt.Sprintf("%s/%s", usecaseFolderName, usecaseName), func(file *ast.File, ts *ast.TypeSpec) bool {
 
@@ -259,7 +261,20 @@ func injectUsecaseInportFields(usecaseFolderName string, usecaseName string) []*
 				for _, f := range structObj.Fields.List {
 					fieldType := utils.TypeHandler{PrefixExpression: utils.LowerCase(usecaseName)}.Mulai(f.Type)
 					for _, name := range f.Names {
-						inportRequestFields = append(inportRequestFields, &InportRequestField{
+						inportRequestFields = append(inportRequestFields, &StructField{
+							Name: name.String(),
+							Type: fieldType,
+						})
+					}
+				}
+			}
+
+			if utils.LowerCase(ts.Name.String()) == "inportresponse" {
+
+				for _, f := range structObj.Fields.List {
+					fieldType := utils.TypeHandler{PrefixExpression: utils.LowerCase(usecaseName)}.Mulai(f.Type)
+					for _, name := range f.Names {
+						inportResponseFields = append(inportResponseFields, &StructField{
 							Name: name.String(),
 							Type: fieldType,
 						})
@@ -270,11 +285,10 @@ func injectUsecaseInportFields(usecaseFolderName string, usecaseName string) []*
 			if utils.LowerCase(ts.Name.String()) == fmt.Sprintf("%sinteractor", file.Name) {
 				usecaseNameWithInteractor := ts.Name.String()
 				usecaseNameOnly := usecaseNameWithInteractor[:strings.LastIndex(usecaseNameWithInteractor, "Interactor")]
-				//usecaseNames = append(usecaseNames, usecaseNameOnly)
-
 				usecases = append(usecases, &Usecase{
-					Name:                usecaseNameOnly,
-					InportRequestFields: inportRequestFields,
+					Name:                 usecaseNameOnly,
+					InportRequestFields:  inportRequestFields,
+					InportResponseFields: inportResponseFields,
 				})
 
 			}
@@ -516,7 +530,14 @@ func getRouterInportTemplate(driverName string) ([]byte, error) {
 	return utils.AppTemplates.ReadFile(path)
 }
 
-func getRouterRegisterTemplate(driverName string) ([]byte, error) {
-	path := fmt.Sprintf("templates/controllers/%s/domain_${domainname}/controller/${controllername}/~inject-router-register._go", driverName)
+func getRouterRegisterTemplate(driverName, usecase string) ([]byte, error) {
+
+	fmt.Printf(">>>> %v\n", usecase)
+	if strings.HasPrefix(strings.ToLower(usecase), "get") {
+		path := fmt.Sprintf("templates/controllers/%s/domain_${domainname}/controller/${controllername}/~inject-router-register-get._go", driverName)
+		return utils.AppTemplates.ReadFile(path)
+	}
+
+	path := fmt.Sprintf("templates/controllers/%s/domain_${domainname}/controller/${controllername}/~inject-router-register-post._go", driverName)
 	return utils.AppTemplates.ReadFile(path)
 }

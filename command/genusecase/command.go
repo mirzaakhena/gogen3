@@ -3,6 +3,7 @@ package genusecase
 import (
 	"fmt"
 	"gogen3/utils"
+	"strings"
 )
 
 // ObjTemplate ...
@@ -42,9 +43,16 @@ func Run(inputs ...string) error {
 		return err
 	}
 
-	err = utils.CreateEverythingExactly("templates/", "usecase", fileRenamer, obj, utils.AppTemplates)
-	if err != nil {
-		return err
+	if strings.HasPrefix(utils.LowerCase(usecaseName), "getall") {
+		err = utils.CreateEverythingExactly("templates/usecase/", "getall", fileRenamer, obj, utils.AppTemplates)
+		if err != nil {
+			return err
+		}
+	} else {
+		err = utils.CreateEverythingExactly("templates/usecase/", "run", fileRenamer, obj, utils.AppTemplates)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

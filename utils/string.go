@@ -63,6 +63,11 @@ func SnakeCase(str string) string {
 	return strings.ToLower(snake)
 }
 
+// StartWith is
+func StartWith(str, prefix string) bool {
+	return strings.HasPrefix(str, prefix)
+}
+
 // HasOneOfThisPrefix ...
 func HasOneOfThisPrefix(s string, str ...string) bool {
 	lc := LowerCase(s)

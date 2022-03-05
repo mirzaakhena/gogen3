@@ -9,4 +9,5 @@ var FuncMap = template.FuncMap{
 	"UpperCase":  UpperCase,
 	"LowerCase":  LowerCase,
 	"SpaceCase":  SpaceCase,
+	"StartWith":  StartWith,
 }

@@ -19,7 +19,8 @@ func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .U
         {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}} {{end}}
 	}
 
-	type response struct {
+	type response struct { {{range .Usecase.InportResponseFields}}
+        {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}}
 	}
 
 	return func(c *gin.Context) {
@@ -48,9 +49,9 @@ func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .U
 			return
 		}
 
-		var jsonRes response
-		// TODO assign value from InportResponse object to response jsonRes object
-		_ = res
+		var jsonRes response {{ if eq (len .Usecase.InportResponseFields) 0 }}
+        _ = res {{else}} {{range .Usecase.InportResponseFields}}
+        jsonRes.{{.Name}} = res.{{.Name}}{{ end }} {{ end }}
 
 		r.Log.Info(ctx, util.MustJSON(jsonRes))
 		c.JSON(http.StatusOK, payload.NewSuccessResponse(jsonRes, traceID))
