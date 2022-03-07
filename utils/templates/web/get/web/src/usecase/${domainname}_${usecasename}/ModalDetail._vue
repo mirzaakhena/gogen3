@@ -15,7 +15,7 @@ const state = reactive({
 
 const modalDetail = ref()
 
-const showModal = () => {
+const showModal = async () => {
 
   const url = `${BASE_URL}/{{LowerCase .UsecaseName}}`
 

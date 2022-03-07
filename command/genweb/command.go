@@ -97,21 +97,22 @@ func Run(inputs ...string) error {
 				if err != nil {
 					return err
 				}
+
 			} else if strings.HasPrefix(utils.LowerCase(usecaseName), "get") {
 				err := utils.CreateEverythingExactly("templates/web/", "get", fileRenamer, obj, utils.AppTemplates)
 				if err != nil {
 					return err
 				}
+
 			} else {
 				err := utils.CreateEverythingExactly("templates/web/", "run", fileRenamer, obj, utils.AppTemplates)
 				if err != nil {
 					return err
 				}
+				
 			}
 
 		}
-
-		//break
 
 	}
 
