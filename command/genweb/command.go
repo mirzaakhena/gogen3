@@ -13,8 +13,15 @@ import (
 
 // ObjTemplate ...
 type ObjTemplate struct {
-	DomainName  string
-	UsecaseName string
+	DomainName        string
+	UsecaseName       string
+	RequestNameTypes  []*NameType
+	ResponseNameTypes []*NameType
+}
+
+type NameType struct {
+	Name string
+	Type string
 }
 
 func Run(inputs ...string) error {
@@ -93,6 +100,9 @@ func Run(inputs ...string) error {
 			}
 
 			if strings.HasPrefix(utils.LowerCase(usecaseName), "getall") {
+
+				// TODO read response field
+
 				err := utils.CreateEverythingExactly("templates/web/", "getall", fileRenamer, obj, utils.AppTemplates)
 				if err != nil {
 					return err
@@ -105,11 +115,51 @@ func Run(inputs ...string) error {
 				}
 
 			} else {
+
+				for _, stmt := range funcDecl.Body.List {
+					declStmt, ok := stmt.(*ast.DeclStmt)
+					if !ok {
+						continue
+					}
+					genDecl, ok := declStmt.Decl.(*ast.GenDecl)
+					if !ok {
+						continue
+					}
+
+					if genDecl.Tok.String() != "type" {
+						continue
+					}
+
+					for _, spec := range genDecl.Specs {
+						typeSpec, ok := spec.(*ast.TypeSpec)
+						if !ok {
+							continue
+						}
+
+						if typeSpec.Name.String() != "request" {
+							continue
+						}
+
+						structType := typeSpec.Type.(*ast.StructType)
+
+						for _, field := range structType.Fields.List {
+							varType := field.Type.(*ast.Ident)
+							for _, name := range field.Names {
+								obj.RequestNameTypes = append(obj.RequestNameTypes, &NameType{
+									Name: name.String(),
+									Type: varType.String(),
+								})
+							}
+						}
+					}
+
+				}
+
 				err := utils.CreateEverythingExactly("templates/web/", "run", fileRenamer, obj, utils.AppTemplates)
 				if err != nil {
 					return err
 				}
-				
+
 			}
 
 		}

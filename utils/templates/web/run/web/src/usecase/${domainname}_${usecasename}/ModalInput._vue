@@ -1,13 +1,11 @@
 <template>
   <MirzaModal id="modal{{.UsecaseName}}" ref="modal{{.UsecaseName}}" title="{{.UsecaseName}}" @submit="submit{{.UsecaseName}}">
+    {{range .RequestNameTypes}}
     <div class="mb-3">
-      <label class="form-label">Name</label>
-      <input type="text" class="form-control" placeholder="Your name" v-model="payload.data.name">
+      <label class="form-label">{{.Name}}</label>
+      <input type="text" class="form-control" placeholder="Your name" v-model="payload.data.{{LowerCase .Name}}">
     </div>
-    <div class="mb-3">
-      <label class="form-label">Age</label>
-      <input type="text" class="form-control" placeholder="Age" v-model="payload.data.age">
-    </div>
+    {{end}}
   </MirzaModal>
 </template>
 
@@ -25,9 +23,8 @@ const modal{{.UsecaseName}} = ref()
 const emit = defineEmits(["submit"])
 
 const payload = reactive({
-  data: {
-    name: '',
-    age: 1,
+  data: { {{range .RequestNameTypes}}
+    {{LowerCase .Name}}: '', {{end}}
   }
 })
 
