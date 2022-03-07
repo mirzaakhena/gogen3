@@ -16,6 +16,7 @@ import (
 	"gogen3/command/genusecase"
 	"gogen3/command/genvalueobject"
 	"gogen3/command/genvaluestring"
+	"gogen3/command/genweb"
 	"gogen3/command/genwebapp"
 )
 
@@ -35,6 +36,7 @@ func main() {
 		"application": genapplication.Run,
 		"crud":        gencrud.Run,
 		"webapp":      genwebapp.Run,
+		"web":         genweb.Run,
 		"init":        geninit.Run,
 	}
 

@@ -1,0 +1,18 @@
+<template>
+  <MirzaTab :headers="headers" />
+</template>
+
+<script setup>
+
+import MirzaTab from "../../components/tabnav/MirzaTab.vue";
+
+const headers = [
+  {to: '/payment/akhena', icon: '#geo-fill', label: 'Akhena'},
+  {to: '/payment/mirza', icon: '#home', label: 'Mirza'},
+]
+
+</script>
+
+<style scoped>
+
+</style>

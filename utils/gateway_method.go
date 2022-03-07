@@ -160,13 +160,13 @@ func (obj *gatewayMethod) findAndCollectImplMethod(fd *ast.FuncDecl, structName 
 
 	switch ty := fd.Recv.List[0].Type.(type) {
 
-	case *ast.Ident: // func (r payment) FindPayment() {}
+	case *ast.Ident: // func (r domain) FindPayment() {}
 		// read all the function that have receiver with gateway name
 		if ty.String() != structName {
 			return false
 		}
 
-	case *ast.StarExpr: // func (r *payment) FindPayment() {}
+	case *ast.StarExpr: // func (r *domain) FindPayment() {}
 		// read all the function that have receiver with gateway name
 		if ty.X.(*ast.Ident).String() != structName {
 			return false

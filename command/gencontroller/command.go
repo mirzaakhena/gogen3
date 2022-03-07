@@ -245,8 +245,6 @@ func Run(inputs ...string) error {
 
 func injectUsecaseInportFields(usecaseFolderName string, usecaseName string, usecases []*Usecase) []*Usecase {
 
-	//usecases := make([]*Usecase, 0)
-
 	inportRequestFields := make([]*StructField, 0)
 	inportResponseFields := make([]*StructField, 0)
 	fset := token.NewFileSet()
