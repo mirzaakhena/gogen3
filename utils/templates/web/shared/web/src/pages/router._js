@@ -8,22 +8,22 @@ const routes = [
         children: [
             {
                 path: '/payment',
-                redirect: '/payment/akhena',
+                redirect: '/payment/waiting',
                 component: () => import('./yourpage/ViewTab.vue'),
                 children: [
                     {
-                        path: '/payment/mirza',
-                        component: () => import('../usecase/getallyourusecasename/PageTable.vue'),
+                        path: '/payment/waiting',
+                        component: () => import('../usecase/sample/Page1.vue'),
                     },
                     {
-                        path: '/payment/akhena',
-                        component: () => import('../usecase/runyourusecasename/PageButton.vue'),
+                        path: '/payment/processing',
+                        component: () => import('../usecase/sample/Page2.vue'),
                     },
                 ],
             },
             {
                 path: '/order',
-                component: () => import('../usecase/getyourusecasename/PageButton.vue'),
+                component: () => import('../usecase/sample/Page3.vue'),
             },
         ],
     },

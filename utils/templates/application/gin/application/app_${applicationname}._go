@@ -12,8 +12,13 @@ import (
 )
 
 type {{CamelCase .ApplicationName}} struct {
-	*server.GinHTTPHandler
-	driver.Controller
+	httpHandler *server.GinHTTPHandler
+	controller  driver.Controller
+}
+
+func (c {{CamelCase .ApplicationName}}) RunApplication() {
+	c.controller.RegisterRouter()
+	c.httpHandler.RunApplication()
 }
 
 func New{{PascalCase .ApplicationName}}() func() driver.RegistryContract {
@@ -32,8 +37,8 @@ func New{{PascalCase .ApplicationName}}() func() driver.RegistryContract {
         datasource := {{LowerCase .GatewayName}}.NewGateway(log, appData, cfg)
 
         return &{{CamelCase .ApplicationName}}{
-            GinHTTPHandler: &httpHandler,
-            Controller: &{{LowerCase .ControllerName}}.Controller{
+            httpHandler: &httpHandler,
+            controller: &{{LowerCase .ControllerName}}.Controller{
                 Log: log,
                 Config: cfg,
                 Router: httpHandler.Router, {{range .UsecaseNames}}

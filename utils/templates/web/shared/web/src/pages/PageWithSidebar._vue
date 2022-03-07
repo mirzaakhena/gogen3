@@ -11,9 +11,9 @@ import Sidebar from "../components/sidebar/Sidebar.vue";
 
 const sections = [
   {
-    header: "payment", menus: [
-      {href: '/payment', title: 'Payment', icon: '#tools',},
+    header: "Section", menus: [
       {href: '/order', title: 'Order', icon: '#speedometer2',},
+      {href: '/payment', title: 'Payment', icon: '#tools',},
     ]
   },
 ]

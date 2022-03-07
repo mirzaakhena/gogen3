@@ -7,8 +7,8 @@
 import MirzaTab from "../../components/tabnav/MirzaTab.vue";
 
 const headers = [
-  {to: '/payment/akhena', icon: '#geo-fill', label: 'Akhena'},
-  {to: '/payment/mirza', icon: '#home', label: 'Mirza'},
+  {to: '/payment/waiting', icon: '#geo-fill', label: 'Waiting'},
+  {to: '/payment/processing', icon: '#home', label: 'Processing'},
 ]
 
 </script>
