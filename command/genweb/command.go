@@ -92,13 +92,13 @@ func Run(inputs ...string) error {
 				UsecaseName: usecaseName,
 			}
 
-			if strings.HasPrefix(utils.LowerCase(usecaseName), "get") {
-				err := utils.CreateEverythingExactly("templates/web/", "get", fileRenamer, obj, utils.AppTemplates)
+			if strings.HasPrefix(utils.LowerCase(usecaseName), "getall") {
+				err := utils.CreateEverythingExactly("templates/web/", "getall", fileRenamer, obj, utils.AppTemplates)
 				if err != nil {
 					return err
 				}
-			} else if strings.HasPrefix(utils.LowerCase(usecaseName), "getall") {
-				err := utils.CreateEverythingExactly("templates/web/", "getall", fileRenamer, obj, utils.AppTemplates)
+			} else if strings.HasPrefix(utils.LowerCase(usecaseName), "get") {
+				err := utils.CreateEverythingExactly("templates/web/", "get", fileRenamer, obj, utils.AppTemplates)
 				if err != nil {
 					return err
 				}
