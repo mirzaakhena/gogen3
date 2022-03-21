@@ -7,6 +7,7 @@ import (
 	"gogen3/command/gencontroller"
 	"gogen3/command/gencrud"
 	"gogen3/command/genentity"
+	"gogen3/command/genenum"
 	"gogen3/command/generror"
 	"gogen3/command/gengateway"
 	"gogen3/command/geninit"
@@ -27,6 +28,7 @@ func main() {
 		"entity":      genentity.Run,
 		"valueobject": genvalueobject.Run,
 		"valuestring": genvaluestring.Run,
+		"enum":        genenum.Run,
 		"repository":  genrepository.Run,
 		"service":     genservice.Run,
 		"gateway":     gengateway.Run,

@@ -140,10 +140,16 @@ func Run(inputs ...string) error {
 							continue
 						}
 
-						structType := typeSpec.Type.(*ast.StructType)
+						structType, ok := typeSpec.Type.(*ast.StructType)
+						if !ok {
+							continue
+						}
 
 						for _, field := range structType.Fields.List {
-							varType := field.Type.(*ast.Ident)
+							varType, ok := field.Type.(*ast.Ident)
+							if !ok {
+								continue
+							}
 							for _, name := range field.Names {
 								obj.RequestNameTypes = append(obj.RequestNameTypes, &NameType{
 									Name: name.String(),

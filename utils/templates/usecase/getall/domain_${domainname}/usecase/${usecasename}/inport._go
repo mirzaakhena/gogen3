@@ -24,5 +24,8 @@ type InportResponse struct {
 }
 
 func (r InportRequest) Validate() error {
+    if r.Page <= 0 {
+
+    }
 	return nil
 }

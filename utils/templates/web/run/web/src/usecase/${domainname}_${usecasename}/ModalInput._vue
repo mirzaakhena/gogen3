@@ -2,8 +2,9 @@
   <MirzaModal id="modal{{.UsecaseName}}" ref="modal{{.UsecaseName}}" title="{{.UsecaseName}}" @submit="submit{{.UsecaseName}}">
     {{range .RequestNameTypes}}
     <div class="mb-3">
-      <label class="form-label">{{.Name}}</label>
-      <input type="text" class="form-control" placeholder="Your name" v-model="payload.data.{{LowerCase .Name}}">
+      <label class="form-label">{{.Name}}</label> {{if StartWith (LowerCase .Type) "int"}}
+      <input type="number" class="form-control" placeholder="Your name" v-model="payload.data.{{LowerCase .Name}}"> {{else}}
+      <input type="text" class="form-control" placeholder="Your name" v-model="payload.data.{{LowerCase .Name}}"> {{end}}
     </div>
     {{end}}
   </MirzaModal>
