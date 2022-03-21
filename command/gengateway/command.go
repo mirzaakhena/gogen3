@@ -19,13 +19,19 @@ func Run(inputs ...string) error {
 
 	if len(inputs) < 1 {
 		err := fmt.Errorf("\n" +
-			"   # Create a gateway for all usecases\n" +
+			"   # Create a gateway for all usecases with cloverdb sample implementation\n" +
 			"   gogen gateway inmemory\n" +
 			"     'inmemory' is a gateway name\n" +
 			"\n" +
 			"   # Create a gateway for specific usecase\n" +
-			"   gogen gateway inmemory CreateOrder\n" +
+			"   gogen gateway inmemory cloverdb\n" +
+			"     'inmemory' is a gateway name\n" +
+			"     'cloverdb' is a sample implementation\n" +
+			"\n" +
+			"   # Create a gateway for specific usecase\n" +
+			"   gogen gateway inmemory cloverdb CreateOrder\n" +
 			"     'inmemory'    is a gateway name\n" +
+			"     'cloverdb' is a sample implementation\n" +
 			"     'CreateOrder' is an usecase name\n" +
 			"\n")
 
@@ -42,8 +48,14 @@ func Run(inputs ...string) error {
 		UsecaseName: nil,
 	}
 
+	driverName := "cloverdb"
+
 	if len(inputs) >= 2 {
-		obj.UsecaseName = &inputs[1]
+		driverName = inputs[1]
+	}
+
+	if len(inputs) >= 3 {
+		obj.UsecaseName = &inputs[2]
 	}
 
 	err := utils.CreateEverythingExactly("templates/", "shared", nil, obj, utils.AppTemplates)
@@ -67,7 +79,7 @@ func Run(inputs ...string) error {
 
 			folders = append(folders, file.Name())
 
-			em, err := createGatewayImpl(file.Name(), obj)
+			em, err := createGatewayImpl(driverName, file.Name(), obj)
 			if err != nil {
 				return err
 			}
@@ -86,7 +98,7 @@ func Run(inputs ...string) error {
 
 	} else {
 
-		em, err := createGatewayImpl(*obj.UsecaseName, obj)
+		em, err := createGatewayImpl(driverName, *obj.UsecaseName, obj)
 		if err != nil {
 			return err
 		}
@@ -97,7 +109,7 @@ func Run(inputs ...string) error {
 
 	}
 
-	gatewayCode, err := getGatewayMethodTemplate()
+	gatewayCode, err := getGatewayMethodTemplate(driverName)
 	if err != nil {
 		return err
 	}
@@ -127,14 +139,14 @@ func Run(inputs ...string) error {
 
 }
 
-func createGatewayImpl(usecaseName string, obj ObjTemplate) (utils.OutportMethods, error) {
+func createGatewayImpl(driverName, usecaseName string, obj ObjTemplate) (utils.OutportMethods, error) {
 	outportMethods, err := utils.NewOutportMethods(obj.DomainName, usecaseName)
 	if err != nil {
 		return nil, err
 	}
 
 	obj.Methods = outportMethods
-	err = utils.CreateEverythingExactly("templates/", "gateway", map[string]string{
+	err = utils.CreateEverythingExactly("templates/gateway/", driverName, map[string]string{
 		"gatewayname": utils.LowerCase(obj.GatewayName),
 		"domainname":  obj.DomainName,
 	}, obj, utils.AppTemplates)
@@ -161,8 +173,9 @@ func createGatewayImpl(usecaseName string, obj ObjTemplate) (utils.OutportMethod
 }
 
 // getGatewayMethodTemplate ...
-func getGatewayMethodTemplate() ([]byte, error) {
-	return utils.AppTemplates.ReadFile("templates/gateway/domain_${domainname}/gateway/${gatewayname}/~inject._go")
+func getGatewayMethodTemplate(driverName string) ([]byte, error) {
+	s := fmt.Sprintf("templates/gateway/%s/domain_${domainname}/gateway/${gatewayname}/~inject._go", driverName)
+	return utils.AppTemplates.ReadFile(s)
 }
 
 func injectToGateway(gatewayFilename, injectedCode string) ([]byte, error) {
