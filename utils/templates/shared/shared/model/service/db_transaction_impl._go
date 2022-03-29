@@ -11,6 +11,14 @@ func WithoutTransaction(ctx context.Context, trx repository.WithoutTransactionDB
 	if err != nil {
 		return err
 	}
+
+	defer func(trx repository.WithoutTransactionDB, ctx context.Context) {
+		err := trx.Close(ctx)
+		if err != nil {
+			return
+		}
+	}(trx, dbCtx)
+
 	return trxFunc(dbCtx)
 }
 
