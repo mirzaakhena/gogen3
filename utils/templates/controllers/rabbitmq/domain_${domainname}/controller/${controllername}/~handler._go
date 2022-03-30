@@ -3,7 +3,7 @@ package {{LowerCase .ControllerName}}
 import (
 	"context"
 	"encoding/json"
-	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .UsecaseName}}"
+	"{{.PackagePath}}/domain_{{.DomainName}}/usecase/{{LowerCase .Usecase.Name}}"
 	"{{.PackagePath}}/shared/infrastructure/logger"
 	"{{.PackagePath}}/shared/infrastructure/util"
 	"{{.PackagePath}}/shared/infrastructure/messaging"
@@ -11,11 +11,11 @@ import (
 	"{{.PackagePath}}/shared/model/payload"
 )
 
-// {{CamelCase .UsecaseName}}Handler ...
-func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .UsecaseName}}.Inport) messaging.HandleFunc {
+// {{CamelCase .Usecase.Name}}Handler ...
+func (r *Controller) {{CamelCase .Usecase.Name}}Handler(inputPort {{LowerCase .Usecase.Name}}.Inport) messaging.HandleFunc {
 
-	type request struct {
-
+	type request struct { {{range .Usecase.InportRequestFields}} {{if ne .Name "Now"}}
+        {{.Name}} {{.Type}} `json:"{{SnakeCase .Name}}"` {{end}} {{end}}
 	}
 
 	return func(payload payload.Payload, err error) {
@@ -42,8 +42,9 @@ func (r *Controller) {{CamelCase .UsecaseName}}Handler(inputPort {{LowerCase .Us
 			return
 		}
 
-		var req {{LowerCase .UsecaseName}}.InportRequest
-		// TODO assign value here
+		var req {{LowerCase .Usecase.Name}}.InportRequest {{range .Usecase.InportRequestFields}}{{if eq .Name "Now"}}
+        req.Now = time.Now(){{ else }}
+        req.{{.Name}} = dataPayload.{{.Name}}{{ end }}{{ end }}
 
 		r.Log.Info(ctx, util.MustJSON(req))
 
