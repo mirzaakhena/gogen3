@@ -1,0 +1,9 @@
+package web
+
+import "embed"
+
+//go:embed dist/*
+var StaticFiles embed.FS
+
+// contentStatic, _ := fs.Sub(fs.FS(web.StaticFiles), "dist")
+// r.Router.StaticFS("/web", http.FS(contentStatic))
