@@ -77,6 +77,10 @@ func Run(inputs ...string) error {
 
 		for _, file := range fileInfo {
 
+			if !file.IsDir() {
+				continue
+			}
+
 			folders = append(folders, file.Name())
 
 			em, err := createGatewayImpl(driverName, file.Name(), obj)
