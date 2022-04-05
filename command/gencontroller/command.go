@@ -95,7 +95,9 @@ func Run(inputs ...string) error {
 		}
 
 		for _, file := range fileInfo {
-
+			if !file.IsDir() {
+				continue
+			}
 			usecases = injectUsecaseInportFields(usecaseFolderName, file.Name(), usecases)
 
 		}
