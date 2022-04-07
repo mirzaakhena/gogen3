@@ -48,7 +48,7 @@ func Run(inputs ...string) error {
 		UsecaseName: nil,
 	}
 
-	driverName := "cloverdb"
+	driverName := "simple"
 
 	if len(inputs) >= 2 {
 		driverName = inputs[1]

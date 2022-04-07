@@ -23,6 +23,7 @@ func NewSuccessResponse(data interface{}, traceID string) interface{} {
 func NewErrorResponse(err error, traceID string) interface{} {
 	var res Response
 	res.Success = false
+	res.TraceID = traceID
 
 	et, ok := err.(apperror.ErrorType)
 	if !ok {
@@ -33,7 +34,6 @@ func NewErrorResponse(err error, traceID string) interface{} {
 
 	res.ErrorCode = et.Code()
 	res.ErrorMessage = et.Error()
-	res.TraceID = traceID
 	return res
 }
 
