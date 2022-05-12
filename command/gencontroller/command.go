@@ -85,7 +85,7 @@ func Run(inputs ...string) error {
 
 		usecaseName := utils.LowerCase(inputs[2])
 
-		injectUsecaseInportFields(usecaseFolderName, usecaseName, usecases)
+		usecases = injectUsecaseInportFields(usecaseFolderName, usecaseName, usecases)
 
 	} else {
 

@@ -11,6 +11,7 @@ import (
 	"gogen3/command/generror"
 	"gogen3/command/gengateway"
 	"gogen3/command/geninit"
+	"gogen3/command/genopenapi"
 	"gogen3/command/genrepository"
 	"gogen3/command/genservice"
 	"gogen3/command/gentest"
@@ -39,6 +40,7 @@ func main() {
 		"crud":        gencrud.Run,
 		"webapp":      genwebapp.Run,
 		"web":         genweb.Run,
+		"openapi":     genopenapi.Run,
 		"init":        geninit.Run,
 	}
 
